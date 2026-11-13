@@ -1,0 +1,6 @@
+question_id,skill,question,option1,option2,option3,option4,answer
+Q001,Python,What is Python?,Language,Animal,Tool,OS,Language
+Q002,Drawing,What is shading?,Technique,Color,Brush,Tool,Technique
+Q003,SEO,What is SEO?,Optimization,Design,Marketing,Coding,Optimization
+Q004,Accounting,What is balance sheet?,Statement,Chart,Graph,Report,Statement
+Q005,Communication,Best communication skill?,Listening,Talking,Reading,Writing,Listening

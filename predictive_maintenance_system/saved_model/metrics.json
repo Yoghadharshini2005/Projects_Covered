@@ -1,0 +1,17 @@
+{
+  "xgb_accuracy": 0.9983,
+  "lr_accuracy": 0.9917,
+  "train_samples": 2400,
+  "test_samples": 600,
+  "features": [
+    "temperature",
+    "vibration",
+    "pressure",
+    "rpm"
+  ],
+  "classes": [
+    "Healthy",
+    "Warning",
+    "Failure"
+  ]
+}

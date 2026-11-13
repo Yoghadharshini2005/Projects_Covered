@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Organ Matching Portal - SmartCare+</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 60%, #4ecdc4 100%);
+      background-attachment: fixed;
+      color: #fff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container { max-width: 1200px; margin: 0 auto; background: rgba(0,0,0,0.8); padding: 30px; border-radius: 15px; box-shadow: 0 8px 32px rgba(0,0,0,0.3) }
+    h1 { text-align: center; color: #4ecdc4; margin-bottom: 8px; font-size: 2rem }
+    .subtitle { text-align: center; color: #bbb; margin-bottom: 24px; font-size: 1rem }
+    
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid rgba(255,255,255,0.1); flex-wrap: wrap }
+    .tab-btn { background: transparent; color: #bbb; border: none; padding: 12px 16px; cursor: pointer; font-weight: 600; font-size: 0.95rem; border-bottom: 3px solid transparent; transition: 0.3s }
+    .tab-btn.active { color: #4ecdc4; border-bottom-color: #4ecdc4 }
+    .tab-btn:hover { color: #fff }
+    
+    .tab-content { display: none }
+    .tab-content.active { display: block }
+    
+    .section { margin-bottom: 20px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 10px }
+    .section h3 { color: #4ecdc4; margin-bottom: 12px; font-size: 1.05rem }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px }
+    .grid-2 { grid-template-columns: repeat(2, 1fr) }
+    
+    label { display: block; color: #ddd; font-size: 0.9rem; margin-bottom: 4px }
+    input, select, textarea { width: 100%; padding: 10px; border: none; border-radius: 6px; font-size: 0.9rem; background: rgba(255,255,255,0.1); color: #fff }
+    input::placeholder { color: #999 }
+    
+    /* Enhanced dropdown styling for dark theme */
+    select {
+      background: rgba(255,255,255,0.1) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 10px center;
+      background-size: 18px;
+      padding-right: 36px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      cursor: pointer;
+    }
+    
+    /* Color the select options with dark backgrounds */
+    select option {
+      background: #2a2a3e;
+      color: #ddd;
+      padding: 8px;
+      line-height: 1.5;
+    }
+    
+    /* Hover state for options */
+    select option:hover {
+      background: #3a3a50;
+      color: #4ecdc4;
+    }
+    
+    /* Selected option styling */
+    select option:checked {
+      background: linear-gradient(#4ecdc4, #4ecdc4);
+      background-color: #4ecdc4;
+      color: #000;
+    }
+    
+    /* Webkit-specific styling for Chrome/Safari */
+    select::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    select::-webkit-scrollbar-track {
+      background: #2a2a3e;
+    }
+    
+    select::-webkit-scrollbar-thumb {
+      background: #4ecdc4;
+      border-radius: 4px;
+    }
+    
+    select::-webkit-scrollbar-thumb:hover {
+      background: #44a08d;
+    }
+    
+    .btn { background: linear-gradient(45deg, #4ecdc4, #44a08d); color: #fff; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; width: 100%; margin-top: 12px; transition: 0.3s }
+    .btn:hover { filter: brightness(1.1) }
+    .btn.secondary { background: #667eea; width: auto }
+    
+    .results { margin-top: 24px; max-height: 600px; overflow-y: auto }
+    .donor-card { background: rgba(255,255,255,0.05); border-left: 4px solid #4ecdc4; padding: 16px; margin-bottom: 12px; border-radius: 8px }
+    .donor-card.risk-high { border-left-color: #ff6b6b }
+    .donor-card.risk-medium { border-left-color: #ffd93d }
+    .donor-card.risk-low { border-left-color: #6bcf7f }
+    
+    .score-badge { display: inline-block; background: #4ecdc4; color: #000; padding: 6px 12px; border-radius: 20px; font-weight: bold; margin-bottom: 8px }
+    .score-badge.high { background: #6bcf7f }
+    .score-badge.medium { background: #ffd93d; color: #333 }
+    .score-badge.low { background: #ff6b6b }
+    
+    .donor-info { margin-bottom: 8px; font-size: 0.9rem }
+    .label-val { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.1) }
+    .label-val span:first-child { color: #bbb }
+    .label-val span:last-child { color: #fff; font-weight: 500 }
+    
+    .message { text-align: center; padding: 12px; margin-top: 12px; border-radius: 6px; font-weight: 600 }
+    .message.error { background: rgba(255, 107, 107, 0.2); color: #ffb3b3 }
+    .message.success { background: rgba(107, 207, 127, 0.2); color: #6bcf7f }
+    
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔎 Organ Matching Portal</h1>
+    <p class="subtitle">Advanced matching engine with medical compatibility & logistics analysis</p>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="basic">Basic Info</button>
+      <button class="tab-btn" data-tab="medical">Medical Details</button>
+      <button class="tab-btn" data-tab="health">Health & History</button>
+      <button class="tab-btn" data-tab="urgency">Urgency & Priority</button>
+      <button class="tab-btn" data-tab="logistics">Logistics</button>
+      <button class="tab-btn" data-tab="legal">Legal & Consent</button>
+    </div>
+
+    <form id="organMatchForm">
+      <!-- Basic Info Tab -->
+      <div id="basic" class="tab-content active">
+        <div class="section">
+          <h3>Recipient Information</h3>
+          <div class="grid grid-2">
+            <div>
+              <label for="recipient_blood_group">Blood Group *</label>
+              <select id="recipient_blood_group" name="recipient_blood_group" required>
+                <option value="">-- Select --</option>
+                <option>A+</option><option>A-</option>
+                <option>B+</option><option>B-</option>
+                <option>O+</option><option>O-</option>
+                <option>AB+</option><option>AB-</option>
+              </select>
+            </div>
+            <div>
+              <label for="recipient_rh">Rh Factor *</label>
+              <select id="recipient_rh" name="recipient_rh" required>
+                <option value="">-- Select --</option>
+                <option>Positive</option>
+                <option>Negative</option>
+              </select>
+            </div>
+            <div>
+              <label for="organ_type">Organ Needed *</label>
+              <select id="organ_type" required>
+                <option value="">-- Select --</option>
+                <option>Kidney</option>
+                <option>Liver</option>
+                <option>Heart</option>
+                <option>Lungs</option>
+                <option>Pancreas</option>
+                <option>Cornea</option>
+              </select>
+            </div>
+            <div>
+              <label for="recipient_age">Age (years) *</label>
+              <input type="number" id="recipient_age" placeholder="e.g., 45" required>
+            </div>
+            <div>
+              <label for="recipient_weight">Weight (kg)</label>
+              <input type="number" id="recipient_weight" step="0.1" placeholder="e.g., 75.5">
+            </div>
+            <div>
+              <label for="recipient_height">Height (cm)</label>
+              <input type="number" id="recipient_height" step="0.1" placeholder="e.g., 175">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Medical Details Tab -->
+      <div id="medical" class="tab-content">
+        <div class="section">
+          <h3>HLA Tissue Typing</h3>
+          <div class="grid">
+            <div>
+              <label for="hla_a">HLA-A</label>
+              <input type="text" id="hla_a" placeholder="e.g., A02:01">
+            </div>
+            <div>
+              <label for="hla_b">HLA-B</label>
+              <input type="text" id="hla_b" placeholder="e.g., B07:02">
+            </div>
+            <div>
+              <label for="hla_dr">HLA-DR</label>
+              <input type="text" id="hla_dr" placeholder="e.g., DR04:01">
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Organ-Specific Health Metrics</h3>
+          <div class="grid grid-2">
+            <div>
+              <label for="creatinine">Creatinine Level (mg/dL) - Kidney</label>
+              <input type="text" id="creatinine" placeholder="e.g., 1.2">
+            </div>
+            <div>
+              <label for="alt">ALT (U/L) - Liver</label>
+              <input type="text" id="alt" placeholder="e.g., 32">
+            </div>
+            <div>
+              <label for="ast">AST (U/L) - Liver</label>
+              <input type="text" id="ast" placeholder="e.g., 28">
+            </div>
+            <div>
+              <label for="ejection_fraction">Ejection Fraction (%) - Heart</label>
+              <input type="text" id="ejection_fraction" placeholder="e.g., 55">
+            </div>
+            <div>
+              <label for="o2_sat">O2 Saturation (%) - Lungs</label>
+              <input type="text" id="o2_sat" placeholder="e.g., 95">
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Crossmatch & Compatibility</h3>
+          <div class="grid grid-2">
+            <div>
+              <label for="crossmatch">Crossmatch Result</label>
+              <select id="crossmatch">
+                <option>Negative</option>
+                <option>Positive</option>
+                <option>Pending</option>
+              </select>
+            </div>
+            <div>
+              <label for="hla_mismatch">HLA Mismatch Count (0-6)</label>
+              <input type="number" id="hla_mismatch" min="0" max="6" placeholder="0-6">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Health & History Tab -->
+      <div id="health" class="tab-content">
+        <div class="section">
+          <h3>Donor Health Status</h3>
+          <div class="grid grid-2">
+            <div>
+              <label for="donor_status">Health Status</label>
+              <select id="donor_status">
+                <option>Healthy</option>
+                <option>Stable</option>
+                <option>Compromised</option>
+              </select>
+            </div>
+            <div>
+              <label for="donation_cause">Cause of Donation</label>
+              <select id="donation_cause">
+                <option value="">-- Select --</option>
+                <option>Brain Death</option>
+                <option>Cardiac Death</option>
+                <option>Living Donor</option>
+              </select>
+            </div>
+            <div>
+              <label for="smoking">Smoking History</label>
+              <select id="smoking">
+                <option>Never</option>
+                <option>Former (quit &gt; 5y)</option>
+                <option>Former (quit &lt; 5y)</option>
+                <option>Current</option>
+              </select>
+            </div>
+            <div>
+              <label for="alcohol">Alcohol Use</label>
+              <select id="alcohol">
+                <option>None</option>
+                <option>Minimal</option>
+                <option>Moderate</option>
+                <option>Heavy</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Medical History & Screening</h3>
+          <div class="grid grid-2">
+            <div>
+              <label for="medical_conditions">Existing Conditions</label>
+              <input type="text" id="medical_conditions" placeholder="e.g., Hypertension, Diabetes">
+            </div>
+            <div>
+              <label for="infection_screening">Infection Screening Status</label>
+              <select id="infection_screening">
+                <option>Negative</option>
+                <option>Positive</option>
+                <option>Pending</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Urgency & Priority Tab -->
+      <div id="urgency" class="tab-content">
+        <div class="section">
+          <h3>Recipient Priority Assessment</h3>
+          <div class="grid grid-2">
+            <div>
+              <label for="urgency_level">Urgency Level *</label>
+              <select id="urgency_level" required>
+                <option value="">-- Select --</option>
+                <option>Critical (1)</option>
+                <option>High (2)</option>
+                <option>Medium (3)</option>
+                <option>Low (4)</option>
+              </select>
+            </div>
+            <div>
+              <label for="waiting_days">Days on Waitlist</label>
+              <input type="number" id="waiting_days" placeholder="e.g., 180">
+            </div>
+            <div>
+              <label for="priority_score">Priority Score (MELD/LAS)</label>
+              <input type="text" id="priority_score" placeholder="e.g., 28 (MELD)">
+            </div>
+            <div>
+              <label for="recipient_category">Category</label>
+              <select id="recipient_category">
+                <option>Pediatric (&lt;18)</option>
+                <option>Adult (18-65)</option>
+                <option>Senior (&gt;65)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logistics Tab -->
+      <div id="logistics" class="tab-content">
+        <div class="section">
+          <h3>Geographic & Transport</h3>
+          <div class="grid grid-2">
+            <div>
+              <label for="distance">Distance (km)</label>
+              <input type="number" id="distance" placeholder="e.g., 150">
+            </div>
+            <div>
+              <label for="transport_time">Transport Time (hours)</label>
+              <input type="number" id="transport_time" step="0.5" placeholder="e.g., 2.5">
+            </div>
+            <div>
+              <label for="cold_ischemia_limit">Cold Ischemia Time Limit (hours)</label>
+              <input type="text" id="cold_ischemia_limit" placeholder="e.g., 24 (kidney), 12 (heart)">
+            </div>
+            <div>
+              <label for="transport_available">Transport Availability</label>
+              <select id="transport_available">
+                <option>Immediate</option>
+                <option>Within 2 hours</option>
+                <option>Within 6 hours</option>
+                <option>Delayed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Hospital Infrastructure</h3>
+          <div class="grid grid-2">
+            <div>
+              <label for="donor_hospital">Donor Hospital ICU Level</label>
+              <select id="donor_hospital">
+                <option>Level-1</option>
+                <option>Level-2</option>
+                <option>Level-3</option>
+              </select>
+            </div>
+            <div>
+              <label for="recipient_hospital">Recipient Hospital ICU Level</label>
+              <select id="recipient_hospital">
+                <option>Level-1</option>
+                <option>Level-2</option>
+                <option>Level-3</option>
+              </select>
+            </div>
+            <div>
+              <label for="or_availability">OR Availability</label>
+              <select id="or_availability">
+                <option>Available Now</option>
+                <option>Within 2 hours</option>
+                <option>Within 6 hours</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal & Consent Tab -->
+      <div id="legal" class="tab-content">
+        <div class="section">
+          <h3>Legal & Consent Verification</h3>
+          <div class="grid grid-2">
+            <div>
+              <label for="consent_status">Consent Verification Status</label>
+              <select id="consent_status">
+                <option>Verified</option>
+                <option>Pending</option>
+                <option>Not Verified</option>
+              </select>
+            </div>
+            <div>
+              <label for="legal_clearance">Legal Clearance</label>
+              <select id="legal_clearance">
+                <option>Approved</option>
+                <option>Pending</option>
+                <option>Rejected</option>
+              </select>
+            </div>
+            <div>
+              <label for="family_approval">Family Approval Status</label>
+              <select id="family_approval">
+                <option>Approved</option>
+                <option>Pending</option>
+                <option>Withheld</option>
+              </select>
+            </div>
+            <div>
+              <label for="registry_id">Registry ID</label>
+              <input type="text" id="registry_id" placeholder="e.g., OM-2025-001234">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div style="text-align: center; margin-top: 20px; display: flex; gap: 10px; justify-content: center">
+        <button type="submit" class="btn" style="width: 300px">Find Compatible Donors</button>
+        <button type="reset" class="btn secondary">Clear</button>
+      </div>
+    </form>
+
+    <div id="message"></div>
+    <div id="results" class="results"></div>
+  </div>
+
+  <script>
+    // ==================== UNIFIED FORM STATE ====================
+    const formState = {
+      // Basic Info
+      recipient_blood_group: '',
+      recipient_rh: '',
+      organ_type: '',
+      recipient_age: '',
+      recipient_weight: '',
+      recipient_height: '',
+      // Medical Details
+      hla_a: '',
+      hla_b: '',
+      hla_dr: '',
+      creatinine: '',
+      alt: '',
+      ast: '',
+      ejection_fraction: '',
+      o2_sat: '',
+      crossmatch: 'Negative',
+      hla_mismatch: '',
+      // Health & History
+      donor_status: 'Healthy',
+      donation_cause: '',
+      smoking: 'Never',
+      alcohol: 'None',
+      medical_conditions: '',
+      infection_screening: 'Negative',
+      // Urgency & Priority
+      urgency_level: '',
+      waiting_days: '',
+      priority_score: '',
+      recipient_category: 'Adult (18-65)',
+      // Logistics
+      distance: '',
+      transport_time: '',
+      cold_ischemia_limit: '',
+      transport_available: 'Immediate',
+      donor_hospital: 'Level-1',
+      recipient_hospital: 'Level-1',
+      or_availability: 'Available Now',
+      // Legal & Consent
+      consent_status: 'Verified',
+      legal_clearance: 'Approved',
+      family_approval: 'Approved',
+      registry_id: ''
+    };
+
+    // Mandatory fields mapping
+    const mandatoryFields = {
+      recipient_blood_group: { tab: 'basic', label: 'Blood Group' },
+      recipient_rh: { tab: 'basic', label: 'Rh Factor' },
+      organ_type: { tab: 'basic', label: 'Organ Needed' },
+      recipient_age: { tab: 'basic', label: 'Age (years)' },
+      urgency_level: { tab: 'urgency', label: 'Urgency Level' }
+    };
+
+    // ==================== SYNC FORM TO STATE ====================
+    function syncFormToState() {
+      Object.keys(formState).forEach(key => {
+        const el = document.getElementById(key);
+        if(el) formState[key] = el.value;
+      });
+    }
+
+    // ==================== SYNC STATE TO FORM ====================
+    function syncStateToForm() {
+      Object.keys(formState).forEach(key => {
+        const el = document.getElementById(key);
+        if(el) el.value = formState[key];
+      });
+    }
+
+    // ==================== TAB SWITCHING ====================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        syncFormToState(); // Save current tab data before switching
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        document.getElementById('message').innerHTML = ''; // Clear messages on tab switch
+        clearHighlights(); // Remove error highlights
+      });
+    });
+
+    // ==================== INPUT SYNC ====================
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      el.addEventListener('change', syncFormToState);
+      el.addEventListener('input', syncFormToState);
+    });
+
+    // ==================== VALIDATION ====================
+    function validateAllFields() {
+      const errors = [];
+      
+      for(const [fieldId, fieldInfo] of Object.entries(mandatoryFields)) {
+        const val = formState[fieldId];
+        if(val === null || val === '' || val === undefined) {
+          errors.push({ fieldId, tab: fieldInfo.tab, label: fieldInfo.label });
+        }
+      }
+
+      return errors;
+    }
+
+    // ==================== CLEAR HIGHLIGHTS ====================
+    function clearHighlights() {
+      document.querySelectorAll('input, select').forEach(el => {
+        el.style.borderColor = '';
+        el.style.borderWidth = '';
+      });
+    }
+
+    // ==================== HIGHLIGHT ERROR FIELD ====================
+    function highlightField(fieldId) {
+      const el = document.getElementById(fieldId);
+      if(el) {
+        el.style.borderColor = '#ff6b6b';
+        el.style.borderWidth = '2px';
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // ==================== NAVIGATE TO TAB ====================
+    function navigateToTab(tabName) {
+      const tabBtn = document.querySelector(`[data-tab="${tabName}"]`);
+      const tabContent = document.getElementById(tabName);
+      if(tabBtn && tabContent) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        tabBtn.classList.add('active');
+        tabContent.classList.add('active');
+      }
+    }
+
+    // ==================== MATCHING ALGORITHM ====================
+    function calculateCompatibilityScore(input) {
+      let score = 0;
+      
+      const recipientBlood = input.recipient_blood_group;
+      const matchPercentage = (recipientBlood === 'O+' || recipientBlood === 'O-') ? 0.8 : 
+                             (recipientBlood === 'AB+' || recipientBlood === 'AB-') ? 0.9 : 0.95;
+      score += matchPercentage * 20;
+      
+      if(input.recipient_rh) score += 10;
+      
+      const hlaMismatch = parseInt(input.hla_mismatch) || 3;
+      score += Math.max(0, 15 - (hlaMismatch * 2));
+      
+      if(input.crossmatch === 'Negative') score += 15;
+      else if(input.crossmatch === 'Pending') score += 7;
+      
+      const creatinine = parseFloat(input.creatinine) || 2;
+      const alt = parseFloat(input.alt) || 50;
+      const ast = parseFloat(input.ast) || 50;
+      const ejection = parseFloat(input.ejection_fraction) || 40;
+      const o2 = parseFloat(input.o2_sat) || 90;
+      
+      let metricScore = 0;
+      if(creatinine < 1.5) metricScore += 5;
+      if(alt < 40 && ast < 40) metricScore += 5;
+      if(ejection > 50) metricScore += 5;
+      if(o2 > 94) metricScore += 5;
+      score += metricScore;
+      
+      const ageDiff = Math.abs(input.donor_age - input.recipient_age) || 25;
+      if(ageDiff <= 15) score += 10;
+      else if(ageDiff <= 25) score += 6;
+      else score += 2;
+      
+      const transportTime = parseFloat(input.transport_time) || 10;
+      const coldLimit = parseFloat(input.cold_ischemia_limit) || 24;
+      if(transportTime < coldLimit * 0.5) score += 10;
+      else if(transportTime < coldLimit) score += 6;
+      
+      return Math.min(100, Math.max(0, Math.round(score)));
+    }
+
+    function getRiskLevel(score) {
+      if(score >= 75) return { level: 'low', color: '#6bcf7f' };
+      if(score >= 50) return { level: 'medium', color: '#ffd93d' };
+      return { level: 'high', color: '#ff6b6b' };
+    }
+
+    function getMockDonors() {
+      return [
+        { id: 1, name: 'Donor A', blood: 'O+', rh: 'Positive', age: 40, organ: 'Kidney', creatinine: 0.9, alt: 25, ast: 22, ejection_fraction: 60, o2_sat: 97, donation_cause: 'Brain Death', distance: 120, transport_time: 2, cold_ischemia_limit: 32 },
+        { id: 2, name: 'Donor B', blood: 'A+', rh: 'Positive', age: 55, organ: 'Liver', creatinine: 1.1, alt: 35, ast: 30, ejection_fraction: 55, o2_sat: 96, donation_cause: 'Cardiac Death', distance: 85, transport_time: 1.5, cold_ischemia_limit: 18 },
+        { id: 3, name: 'Donor C', blood: 'B+', rh: 'Positive', age: 35, organ: 'Heart', creatinine: 0.8, alt: 28, ast: 25, ejection_fraction: 62, o2_sat: 98, donation_cause: 'Brain Death', distance: 200, transport_time: 3.5, cold_ischemia_limit: 12 }
+      ];
+    }
+
+    // ==================== FORM SUBMISSION ====================
+    document.getElementById('organMatchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      syncFormToState(); // Ensure state is up-to-date
+      clearHighlights();
+      document.getElementById('message').innerHTML = '';
+      document.getElementById('results').innerHTML = '';
+
+      // Validate all mandatory fields
+      const errors = validateAllFields();
+      if(errors.length > 0) {
+        const firstError = errors[0];
+        navigateToTab(firstError.tab);
+        highlightField(firstError.fieldId);
+        
+        let errorMsg = '<div class="message error"><strong>Missing Required Fields:</strong><ul style="text-align:left;margin:8px 0">';
+        errors.forEach(err => {
+          errorMsg += `<li>${err.label} (${err.tab.toUpperCase()})</li>`;
+        });
+        errorMsg += '</ul></div>';
+        document.getElementById('message').innerHTML = errorMsg;
+        return;
+      }
+
+      // Show loading state
+      document.getElementById('message').innerHTML = '<div class="message" style="background:rgba(78,205,196,0.2);color:#4ecdc4">🔄 Matching donors...</div>';
+      document.getElementById('results').innerHTML = '';
+
+      // Simulate async processing
+      setTimeout(() => {
+        try {
+          const input = { ...formState };
+          const donors = getMockDonors();
+          const matches = donors.map(d => ({
+            ...d,
+            donor_age: d.age,
+            score: calculateCompatibilityScore({ ...input, donor_age: d.age }),
+            transport_time: d.transport_time,
+            cold_ischemia_limit: d.cold_ischemia_limit
+          })).sort((a, b) => b.score - a.score);
+
+          if(matches.length === 0) {
+            document.getElementById('message').innerHTML = '<div class="message error">❌ No compatible donors found. Try adjusting your criteria.</div>';
+            return;
+          }
+
+          let html = '<h3 style="color: #4ecdc4; margin-bottom: 16px">✅ Compatible Donors (Ranked)</h3>';
+          matches.forEach((m, idx) => {
+            const risk = getRiskLevel(m.score);
+            html += `
+              <div class="donor-card risk-${risk.level}">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px">
+                  <div>
+                    <strong>#${idx + 1} - ${m.name}</strong> (ID: ${m.id})
+                    <div style="font-size: 0.85rem; color: #bbb">Donation: ${m.donation_cause}</div>
+                  </div>
+                  <span class="score-badge ${risk.level}">${m.score}% Match</span>
+                </div>
+                <div class="label-val">
+                  <span>Blood Group:</span>
+                  <span>${m.blood} / ${m.rh}</span>
+                </div>
+                <div class="label-val">
+                  <span>Age / Organ:</span>
+                  <span>${m.age} years / ${m.organ}</span>
+                </div>
+                <div class="label-val">
+                  <span>HLA Mismatch:</span>
+                  <span>${formState.hla_mismatch || 'N/A'}</span>
+                </div>
+                <div class="label-val">
+                  <span>Distance / Transport:</span>
+                  <span>${m.distance}km / ${m.transport_time}h</span>
+                </div>
+                <div class="label-val">
+                  <span>Cold Ischemia Limit:</span>
+                  <span>${m.cold_ischemia_limit}h</span>
+                </div>
+                <div class="label-val">
+                  <span>Risk Level:</span>
+                  <span style="color: ${risk.color}">${risk.level.toUpperCase()}</span>
+                </div>
+              </div>
+            `;
+          });
+          document.getElementById('results').innerHTML = html;
+          document.getElementById('message').innerHTML = '';
+        } catch(err) {
+          document.getElementById('message').innerHTML = `<div class="message error">❌ Error: ${err.message}</div>`;
+        }
+      }, 800);
+    });
+  </script>
+</body>
+</html>

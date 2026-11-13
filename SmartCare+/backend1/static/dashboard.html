@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartCare+ | Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body id="dashboardBody">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <h1 id="hospitalDisplay">🏥 SmartCare+ Dashboard</h1>
+        <p id="quote">Welcome to your hospital management panel</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="dashboard-nav">
+        <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="blood-donation.html">Blood Donation</a></li>
+            <li><a href="organ-matching.html">Organ Matching</a></li>
+            <li><a href="emergency-requests.html">Emergency Requests</a></li>
+            <li><a href="index.html">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="dashboard-container">
+
+        <!-- Live Stats -->
+        <div class="card">
+            <h2>Live Stats <span id="statsNumber" style="float:right; font-size:32px; font-weight:bold; color:#d946a6;">0</span></h2>
+            <div style="clear:both;"></div>
+            <div style="padding: 15px 0;">
+                <p><strong>Total Units Available:</strong> <span id="totalUnits">0</span></p>
+                <p><strong>Total Donors:</strong> <span id="totalDonors">0</span></p>
+                <p><strong>Active Requests:</strong> <span id="activeRequests">0</span></p>
+                <p><strong>Organs Available:</strong> <span id="organsAvailable">0</span></p>
+                <p><strong>Today's Donations:</strong> <span id="todayDonations">0</span></p>
+            </div>
+        </div>
+
+        <!-- Blood Stock -->
+        <div class="card">
+            <h2>Blood Stock</h2>
+            <table id="bloodTable">
+                <thead>
+                    <tr>
+                        <th>Hospital</th>
+                        <th>Blood Type</th>
+                        <th>Units</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Expiry Alerts -->
+        <div class="card">
+            <h2>Expiry Alerts (Next 3 Days)</h2>
+            <ul id="expiryAlerts"></ul>
+        </div>
+
+        <!-- Top Donors -->
+        <div class="card">
+            <h2>Top Donors</h2>
+            <div class="donor-list" id="donors-container"></div>
+        </div>
+
+        <!-- Emergency Requests -->
+        <div class="card">
+            <h2>Emergency Donation Requests</h2>
+            <div class="scroll-row" id="requests-container"></div>
+            <button class="btn" onclick="postRequest()">Post Emergency Request</button>
+        </div>
+    </main>
+
+    <!-- Script -->
+    <script>
+    // Rotating Quotes
+    const quotes = [
+        "Every drop counts, every life matters.",
+        "Donate blood, save lives.",
+        "Be someone’s hero – donate blood today."
+    ];
+    let quoteIndex = 0;
+    setInterval(() => {
+        document.getElementById("quote").innerText = quotes[quoteIndex];
+        quoteIndex = (quoteIndex + 1) % quotes.length;
+    }, 4000);
+
+    // Load Live Stats
+    async function loadLiveStats() {
+      try {
+        // Fetch blood stock
+        const bloodRes = await fetch("/api/blood_stock");
+        const bloodData = await bloodRes.json();
+        
+        // Fetch donors
+        const donorsRes = await fetch("/api/donors");
+        const donorsData = await donorsRes.json();
+        
+        // Fetch requests
+        const requestsRes = await fetch("/api/requests");
+        const requestsData = await requestsRes.json();
+        
+        // Calculate total units
+        const totalUnits = bloodData.reduce((sum, b) => sum + (b.units || 0), 0);
+        
+        // Count total donors
+        const totalDonors = donorsData ? donorsData.length : 0;
+        
+        // Count active requests (status == 'Pending')
+        const activeRequests = requestsData.filter(r => r.status === 'Pending').length;
+        
+        // Count organs available (unique organs from donors)
+        const organsAvailable = donorsData ? new Set(donorsData.map(d => d.organ).filter(o => o)).size : 0;
+        
+        // Count today's donations (assuming donation_date matches today)
+        const today = new Date().toISOString().split('T')[0];
+        const todayDonations = donorsData.filter(d => d.donation_date && d.donation_date.startsWith(today)).length;
+        
+        // Update the UI
+        document.getElementById("totalUnits").textContent = totalUnits;
+        document.getElementById("totalDonors").textContent = totalDonors;
+        document.getElementById("activeRequests").textContent = activeRequests;
+        document.getElementById("organsAvailable").textContent = organsAvailable;
+        document.getElementById("todayDonations").textContent = todayDonations;
+        document.getElementById("statsNumber").textContent = totalUnits;
+        
+      } catch (error) {
+        console.error("Error loading stats:", error);
+      }
+    }
+
+    // Load Blood Data
+    async function loadBloodData() {
+      const res = await fetch("/api/blood_stock");
+      const data = await res.json();
+      const tbody = document.querySelector("#bloodTable tbody");
+      tbody.innerHTML = "";
+
+      const today = new Date();
+      const expiryList = document.getElementById("expiryAlerts");
+      expiryList.innerHTML = "";
+
+      data.forEach(b => {
+        const expiry = new Date(b.expiry_date);
+        const diffDays = (expiry - today) / (1000 * 3600 * 24);
+        let color = "green";
+        let status = "Normal";
+        if (diffDays <= 0) { color = "red"; status = "Expired"; }
+        else if (diffDays <= 5) { color = "orange"; status = "Expiring Soon"; }
+
+        const row = `<tr style="background-color:${color};color:white">
+          <td>${b.hospital_name}</td>
+          <td>${b.blood_type}</td>
+          <td>${b.units}</td>
+          <td>${b.expiry_date}</td>
+          <td>${status}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+
+        if (diffDays <= 3 && diffDays > 0) {
+            expiryList.innerHTML += `<li>${b.blood_type} - ${b.units} units expiring on ${b.expiry_date}</li>`;
+        }
+      });
+    }
+
+    // Load Donors
+    async function loadDonors() {
+      const res = await fetch("/api/donors");
+      const donors = await res.json();
+      const container = document.getElementById("donors-container");
+      container.innerHTML = "";
+      donors.slice(0, 10).forEach(d => {
+        const div = document.createElement("div");
+        div.className = "donor-card";
+        div.innerHTML = `<h4>${d.name} (${d.blood_group})</h4>
+                         <p>Units: ${d.units}, Hospital: ${d.hospital}</p>`;
+        container.appendChild(div);
+      });
+    }
+
+    // Load Requests
+    async function loadRequests() {
+      try {
+        const res = await fetch("/api/requests");
+        const reqs = await res.json();
+        const container = document.getElementById("requests-container");
+        container.innerHTML = "";
+        
+        if (!reqs || reqs.length === 0) {
+          container.innerHTML = "<p style='text-align:center; padding: 10px;'>No emergency requests yet</p>";
+          return;
+        }
+        
+        reqs.forEach(r => {
+          const div = document.createElement("div");
+          div.className = "request-card";
+          const hospitalName = r.hospital_name || "Unknown Hospital";
+          const bloodType = r.blood_type || "Unknown";
+          const units = r.units_needed || "0";
+          const urgency = r.urgency_level || "Normal";
+          const date = r.date || new Date().toLocaleDateString();
+          
+          div.innerHTML = `<h4>${hospitalName}</h4>
+                           <p><strong>${bloodType}</strong> needed</p>
+                           <p>Units: ${units} | Urgency: <span style="color: ${urgency === 'High' ? 'red' : urgency === 'Medium' ? 'orange' : 'green'}">${urgency}</span></p>
+                           <p>Date: ${date}</p>
+                           <p>Status: <strong>${r.status || 'Pending'}</strong></p>`;
+          container.appendChild(div);
+        });
+      } catch (error) {
+        console.error("Error loading requests:", error);
+        document.getElementById("requests-container").innerHTML = "<p>Error loading requests</p>";
+      }
+    }
+
+    // Navigate to Emergency Request Page
+    function postRequest() {
+      window.location.href = "emergency-requests.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadLiveStats();
+      loadBloodData();
+      loadDonors();
+      loadRequests();
+    });
+    </script>
+</body>
+</html>

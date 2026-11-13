@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Emergency Requests</title>
+<style>
+body { font-family: Arial; padding: 20px; background: linear-gradient(135deg,#ff9a9e,#fad0c4); }
+.request-card {
+    background:white; padding:15px; margin:10px 0; border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+button { margin-right:10px; padding:5px 10px; border:none; border-radius:5px; cursor:pointer; }
+button.accept { background: #4CAF50; color:white; }
+button.decline { background:#f44336; color:white; }
+form { background:white; padding:15px; border-radius:10px; margin-bottom:20px; }
+form label { display:block; margin-top:10px; }
+form input, form select { padding:5px; width:200px; margin-top:5px; }
+</style>
+</head>
+<body>
+<h2>Emergency Blood Donation Requests</h2>
+
+<form id="emergencyForm">
+    <label>Hospital:
+        <select id="hospitalSelect" required></select>
+    </label>
+    <label>Blood Type:
+        <select id="bloodTypeSelect" required>
+            <option value="">Select Blood Type</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+        </select>
+    </label>
+    <label>Units Required:
+        <input type="number" id="unitsInput" min="1" max="10" value="1" required>
+    </label>
+    <label>Date Required:
+        <input type="date" id="dateInput" required>
+    </label>
+    <label>Contact Number:
+        <input type="tel" id="contactInput" placeholder="Enter contact number" required>
+    </label>
+    <label>Urgency Level:
+        <select id="urgencySelect" required>
+            <option value="">Select Urgency</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+    </label>
+    <button type="submit">Submit Request</button>
+</form>
+
+<div id="requestsList"></div>
+
+<script>
+// ------------------- Hospital List -------------------
+const hospitals = [
+    "Coimbatore Medical College and Hospital – Coimbatore",
+    "Ganga Hospital – Coimbatore",
+    "KMCH (Kovai Medical Center and Hospital) – Coimbatore",
+    "PSG Hospitals – Peelamedu, Coimbatore"
+    // Add more hospitals if needed
+];
+
+// ------------------- Populate Hospital Dropdown -------------------
+function populateHospitalDropdown() {
+    const select = document.getElementById("hospitalSelect");
+    select.innerHTML = "";
+    hospitals.forEach(h => {
+        const option = document.createElement("option");
+        option.value = h;
+        option.textContent = h;
+        select.appendChild(option);
+    });
+    // Default to logged-in hospital
+    const loggedHospital = localStorage.getItem("loggedHospital");
+    if (loggedHospital && hospitals.includes(loggedHospital)) {
+        select.value = loggedHospital;
+    }
+}
+
+// ------------------- Load Requests -------------------
+async function loadRequests() {
+    const response = await fetch("/api/requests");
+    const requests = await response.json();
+    const container = document.getElementById("requestsList");
+    container.innerHTML = "";
+    
+    if (!requests || requests.length === 0) {
+        container.innerHTML = "<p style='text-align:center; padding: 20px;'>No emergency requests yet</p>";
+        return;
+    }
+    
+    requests.forEach(r => {
+        const div = document.createElement("div");
+        div.className = "request-card";
+        const urgencyColor = r.urgency_level === 'High' ? 'red' : r.urgency_level === 'Medium' ? 'orange' : 'green';
+        div.innerHTML = `
+            <h3>${r.hospital_name || 'Unknown Hospital'}</h3>
+            <p><strong>${r.blood_type || 'Unknown'}</strong> needed</p>
+            <p>Units: ${r.units_needed || '0'} | Date: ${r.date || 'N/A'}</p>
+            <p>Contact: ${r.contact || 'N/A'}</p>
+            <p>Urgency: <span style="color: ${urgencyColor}; font-weight: bold;">${r.urgency_level || 'Normal'}</span></p>
+            <button class="accept" onclick="updateStatus(${r.id}, 'Accepted')">Accept</button>
+            <button class="decline" onclick="updateStatus(${r.id}, 'Declined')">Decline</button>
+            <span>Status: <strong>${r.status || 'Pending'}</strong></span>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// ------------------- Submit Emergency Request -------------------
+document.getElementById("emergencyForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    const hospital = document.getElementById("hospitalSelect").value;
+    const blood_type = document.getElementById("bloodTypeSelect").value;
+    const units_needed = parseInt(document.getElementById("unitsInput").value);
+    const urgency_level = document.getElementById("urgencySelect").value;
+    const date = document.getElementById("dateInput").value;
+    const contact = document.getElementById("contactInput").value;
+
+    if (!hospital || !blood_type || !units_needed || !urgency_level || !date || !contact) {
+        alert("Please fill in all fields!");
+        return;
+    }
+
+    const requestData = {
+        hospital_name: hospital,
+        blood_type: blood_type,
+        units_needed: units_needed,
+        urgency_level: urgency_level,
+        date: date,
+        contact: contact,
+        status: "Pending"
+    };
+
+    try {
+        const response = await fetch("/api/add_donation_request", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(requestData)
+        });
+
+        const result = await response.json();
+        alert("✅ Emergency request submitted successfully!");
+        document.getElementById("emergencyForm").reset();
+        
+        setTimeout(() => {
+            window.location.href = "dashboard.html";
+        }, 1000);
+    } catch (error) {
+        alert("❌ Error submitting request. Please try again.");
+        console.error("Error:", error);
+    }
+});
+
+// ------------------- Update Request Status -------------------
+async function updateStatus(id, status) {
+    await fetch("/api/update_request_status", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id, status})
+    });
+    loadRequests();
+}
+
+// ------------------- On Load -------------------
+window.onload = () => {
+    populateHospitalDropdown();
+    
+    // Set today's date as default
+    const dateInput = document.getElementById("dateInput");
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+    }
+    
+    loadRequests();
+};
+</script>
+</body>
+</html>

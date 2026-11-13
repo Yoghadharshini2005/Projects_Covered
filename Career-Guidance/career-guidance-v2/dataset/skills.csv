@@ -1,0 +1,11 @@
+skill_id,skill_name,category,level
+S001,Python,Technical,Advanced
+S002,Machine Learning,Technical,Advanced
+S003,Drawing,Creative,Intermediate
+S004,Creativity,Creative,Intermediate
+S005,Communication,Soft,Beginner
+S006,Photoshop,Creative,Intermediate
+S007,Writing,Soft,Intermediate
+S008,SEO,Technical,Intermediate
+S009,Accounting,Technical,Intermediate
+S010,Animation,Creative,Intermediate

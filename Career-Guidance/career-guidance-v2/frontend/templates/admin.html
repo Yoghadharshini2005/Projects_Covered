@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+    <h1>⚙️ Admin Panel</h1>
+    <ul class="nav nav-tabs">
+        <li class="nav-item"><a class="nav-link active" href="#jobs">Jobs</a></li>
+        <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
+        <li class="nav-item"><a class="nav-link" href="#questions">Questions</a></li>
+        <li class="nav-item"><a class="nav-link" href="#users">Users</a></li>
+    </ul>
+    <div class="tab-content mt-4">
+        <div id="jobs">
+            <h4>Add Job Role</h4>
+            <input id="jobName" placeholder="Job Role" class="form-control d-inline w-auto me-2">
+            <input id="jobSkills" placeholder="Skills JSON ['Python','SQL']" class="form-control d-inline w-auto me-2">
+            <button onclick="addJob()" class="btn btn-success">Add</button>
+        </div>
+        <div id="courses" class="mt-4">
+            <h4>Add Course</h4>
+            <input id="courseName" placeholder="Course Name" class="form-control d-inline w-auto me-2">
+            <input id="courseStream" placeholder="Stream" class="form-control d-inline w-auto me-2">
+            <input id="courseSkills" placeholder="Skills JSON" class="form-control d-inline w-auto me-2">
+            <button onclick="addCourse()" class="btn btn-success">Add</button>
+        </div>
+        <div id="questions" class="mt-4">
+            <h4>Add Question</h4>
+            <input id="qText" placeholder="Question" class="form-control mb-2">
+            <input id="qSkill" placeholder="Skill" class="form-control mb-2">
+            <input id="qOptions" placeholder="Options JSON" class="form-control mb-2">
+            <input id="qAnswer" placeholder="Answer" class="form-control mb-2">
+            <button onclick="addQuestion()" class="btn btn-success">Add</button>
+        </div>
+        <div id="users" class="mt-4">
+            <h4>Users</h4>
+            <button onclick="listUsers()" class="btn btn-info">Load Users</button>
+            <div id="userList"></div>
+        </div>
+    </div>
+    <script>
+        async function addJob() {
+            const job = document.getElementById('jobName').value;
+            const skills = JSON.parse(document.getElementById('jobSkills').value || '[]');
+            await fetch('/api/admin/add-job', {method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({job_role: job, required_skills: skills})});
+            alert('Added');
+        }
+        async function addCourse() {
+            const course = document.getElementById('courseName').value;
+            const stream = document.getElementById('courseStream').value;
+            const skills = JSON.parse(document.getElementById('courseSkills').value || '[]');
+            await fetch('/api/admin/add-course', {method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({course_name: course, stream, skills_gained: skills})});
+            alert('Added');
+        }
+        async function addQuestion() {
+            const data = {
+                question: document.getElementById('qText').value,
+                skill: document.getElementById('qSkill').value,
+                options: JSON.parse(document.getElementById('qOptions').value || '[]'),
+                answer: document.getElementById('qAnswer').value
+            };
+            await fetch('/api/admin/add-question', {method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)});
+            alert('Added');
+        }
+        async function listUsers() {
+            const res = await fetch('/api/admin/users');
+            const users = await res.json();
+            document.getElementById('userList').innerHTML = users.map(u => 
+                `<div class="card mb-2"><div class="card-body">${u.name} (${u.user_type}) - ${u.email}</div></div>`).join('');
+        }
+    </script>
+</body>
+</html>
+

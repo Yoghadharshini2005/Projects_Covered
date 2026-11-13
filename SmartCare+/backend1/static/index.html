@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartCare+ | Home</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body id="homeBody">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="logo-icon">🏥</div>
+                <h1>SmartCare+</h1>
+                <p>Connecting Hospitals • Donors • Communities</p>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="hospitalType">Hospital Type</label>
+                    <select id="hospitalType" onchange="updateHospitalNames()">
+                        <option value="">Select Type</option>
+                        <option value="government">Government</option>
+                        <option value="private">Private</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="hospitalName">Hospital Name</label>
+                    <select id="hospitalName">
+                        <option value="">Select Name</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+
+                <button class="btn" type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+__MACOSX/
+
+# Node
+node_modules/
+
+# Database
+*.db
+
+# Model cache (optional)
+*.pkl
+
+# IDE
+.vscode/
+.idea/

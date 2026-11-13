@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Skill Gap Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+    <h1>🎯 Skill Gap Analyzer</h1>
+    <form id="gapForm">
+        <div class="mb-3">
+            <label>Your Skills (comma separated)</label>
+            <input type="text" class="form-control" id="userSkills" placeholder="Python, SQL, React">
+        </div>
+        <div class="mb-3">
+            <label>Target Career</label>
+            <input type="text" class="form-control" id="career" placeholder="Data Science">
+        </div>
+        <button type="submit" class="btn btn-primary">Analyze Gap</button>
+    </form>
+    <div id="results" class="mt-4"></div>
+    <script>
+        document.getElementById('gapForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const skills = document.getElementById('userSkills').value.split(',').map(s=>s.trim()).filter(Boolean);
+            const career = document.getElementById('career').value;
+            const res = await fetch('/api/skill-gap', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user_skills: skills, target_career: career})
+            });
+            const data = await res.json();
+            document.getElementById('results').innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Match: ${data.match_percentage}%</h5>
+                        <p><strong>Matched:</strong> ${data.matched_skills.join(', ')}</p>
+                        <p><strong>Missing:</strong> ${data.missing_skills.join(', ')}</p>
+                    </div>
+                </div>`;
+        }
+    </script>
+</body>
+</html>
+

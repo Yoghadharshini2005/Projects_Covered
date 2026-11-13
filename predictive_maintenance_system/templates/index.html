@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Predictive Maintenance System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-icon">⚙</div>
+    <div>
+      <div class="logo-title">MaintainIQ</div>
+      <div class="logo-sub">Predictive Maintenance System</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="status-pill" id="systemStatus">
+      <span class="status-dot green"></span> System Online
+    </div>
+    <div class="model-badge">
+      XGBoost <span class="acc-badge">{{ metrics.xgb_accuracy | float * 100 | round(1) }}% ACC</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════
+     NAV TABS
+═══════════════════════════════════════════ -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+  <button class="tab-btn" data-tab="predict">🔬 Analyse</button>
+  <button class="tab-btn" data-tab="twin">🧬 Digital Twin</button>
+  <button class="tab-btn" data-tab="chat">💬 AI Assistant</button>
+  <button class="tab-btn" data-tab="history">📋 History</button>
+  <button class="tab-btn" data-tab="charts">📈 Charts</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     TAB: DASHBOARD
+═══════════════════════════════════════════ -->
+<div class="tab-content active" id="tab-dashboard">
+  <div class="section-title">System Overview</div>
+
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi-card">
+      <div class="kpi-icon green">✅</div>
+      <div class="kpi-value" id="kpiHealthy">–</div>
+      <div class="kpi-label">Healthy Readings</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon amber">⚠️</div>
+      <div class="kpi-value" id="kpiWarning">–</div>
+      <div class="kpi-label">Warnings Issued</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon red">🔴</div>
+      <div class="kpi-value" id="kpiFailure">–</div>
+      <div class="kpi-label">Failures Detected</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon blue">🔔</div>
+      <div class="kpi-value" id="kpiAlerts">–</div>
+      <div class="kpi-label">Total Alerts</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-header">Model Performance</div>
+      <div class="metric-row">
+        <span class="metric-label">XGBoost Accuracy</span>
+        <span class="metric-value green">{{ metrics.xgb_accuracy | float * 100 | round(2) }}%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Logistic Regression</span>
+        <span class="metric-value blue">{{ metrics.lr_accuracy | float * 100 | round(2) }}%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Train Samples</span>
+        <span class="metric-value">{{ metrics.train_samples }}</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Test Samples</span>
+        <span class="metric-value">{{ metrics.test_samples }}</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Features Used</span>
+        <span class="metric-value">Temperature · Vibration · Pressure · RPM</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Sensor Thresholds</div>
+      <table class="threshold-table">
+        <thead><tr><th>Sensor</th><th>Normal</th><th>Warning</th><th>Failure</th></tr></thead>
+        <tbody>
+          <tr><td>Temperature</td><td class="green">40–65°C</td><td class="amber">>70°C</td><td class="red">>90°C</td></tr>
+          <tr><td>Vibration</td>  <td class="green">0.1–0.5g</td><td class="amber">>0.6g</td><td class="red">>1.5g</td></tr>
+          <tr><td>Pressure</td>   <td class="green">90–110 PSI</td><td class="amber"><80 PSI</td><td class="red"><60 PSI</td></tr>
+          <tr><td>RPM</td>        <td class="green">1400–1600</td><td class="amber"><1300</td><td class="red"><1000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB: ANALYSE / PREDICT
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="tab-predict">
+  <div class="section-title">Sensor Analysis & Prediction</div>
+  <div class="two-col">
+    <!-- Input Form -->
+    <div class="card">
+      <div class="card-header">📡 Enter Sensor Readings</div>
+      <div class="form-group">
+        <label>🌡️ Temperature (°C)</label>
+        <input type="number" id="inp_temp"  class="form-input" placeholder="e.g. 65" step="0.1">
+        <div class="input-hint">Normal: 40–65°C</div>
+      </div>
+      <div class="form-group">
+        <label>📳 Vibration (g)</label>
+        <input type="number" id="inp_vib"   class="form-input" placeholder="e.g. 0.35" step="0.01">
+        <div class="input-hint">Normal: 0.1–0.5g</div>
+      </div>
+      <div class="form-group">
+        <label>🔧 Pressure (PSI)</label>
+        <input type="number" id="inp_pres"  class="form-input" placeholder="e.g. 100" step="0.1">
+        <div class="input-hint">Normal: 90–110 PSI</div>
+      </div>
+      <div class="form-group">
+        <label>⚙️ RPM</label>
+        <input type="number" id="inp_rpm"   class="form-input" placeholder="e.g. 1500" step="1">
+        <div class="input-hint">Normal: 1400–1600</div>
+      </div>
+
+      <div class="preset-btns">
+        <span class="preset-label">Quick load:</span>
+        <button class="preset-btn green" onclick="loadPreset('healthy')">✅ Healthy</button>
+        <button class="preset-btn amber" onclick="loadPreset('warning')">⚠️ Warning</button>
+        <button class="preset-btn red"   onclick="loadPreset('failure')">🔴 Failure</button>
+      </div>
+
+      <button class="btn-primary" id="analyseBtn" onclick="runPrediction()">
+        🔬 Analyse Machine
+      </button>
+    </div>
+
+    <!-- Result Panel -->
+    <div class="card" id="resultPanel" style="display:none">
+      <div class="card-header">🎯 Prediction Result</div>
+
+      <div class="result-condition" id="resultCondition">–</div>
+      <div class="confidence-bar-wrap">
+        <div class="confidence-label">Confidence: <span id="confText">–</span></div>
+        <div class="confidence-bar-bg">
+          <div class="confidence-bar-fill" id="confBar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="prob-row">
+        <div class="prob-item green" id="probHealthy">Healthy<br><span>–</span></div>
+        <div class="prob-item amber" id="probWarning">Warning<br><span>–</span></div>
+        <div class="prob-item red"   id="probFailure">Failure<br><span>–</span></div>
+      </div>
+
+      <div class="card-header" style="margin-top:1.5rem">🔍 Root Cause Analysis</div>
+      <div id="rcaContainer"></div>
+
+      <div id="alertsContainer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB: DIGITAL TWIN
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="tab-twin">
+  <div class="section-title">🧬 Digital Twin — 24-Hour Degradation Simulation</div>
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-header">Configure Simulation Starting Point</div>
+    <div class="form-row-4">
+      <div class="form-group">
+        <label>🌡️ Temp (°C)</label>
+        <input type="number" id="twin_temp" class="form-input" value="55" step="1">
+      </div>
+      <div class="form-group">
+        <label>📳 Vibration (g)</label>
+        <input type="number" id="twin_vib"  class="form-input" value="0.3" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>🔧 Pressure (PSI)</label>
+        <input type="number" id="twin_pres" class="form-input" value="100" step="1">
+      </div>
+      <div class="form-group">
+        <label>⚙️ RPM</label>
+        <input type="number" id="twin_rpm"  class="form-input" value="1500" step="10">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="runDigitalTwin()">▶ Run Simulation</button>
+  </div>
+  <div class="card" id="twinResultCard" style="display:none">
+    <div class="card-header">Simulation Timeline</div>
+    <canvas id="twinChart" height="280"></canvas>
+    <div class="twin-timeline" id="twinTimeline"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB: AI CHAT
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="tab-chat">
+  <div class="section-title">💬 AI Maintenance Assistant</div>
+  <div class="chat-wrap">
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-msg bot">
+        <div class="chat-avatar">🤖</div>
+        <div class="chat-bubble">
+          Hello! I'm your AI Maintenance Assistant. I can answer questions about machine health, 
+          failure probability, sensor readings, and maintenance recommendations.<br><br>
+          Try asking: <em>"What is the machine status?"</em> or <em>"What action should I take?"</em>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" class="chat-input" 
+             placeholder="Ask about machine health, sensors, maintenance..." 
+             onkeydown="if(event.key==='Enter') sendChat()">
+      <button class="btn-primary chat-send" onclick="sendChat()">Send ➤</button>
+    </div>
+    <div class="quick-questions">
+      <span class="qq-label">Quick:</span>
+      <button class="qq-btn" onclick="quickChat('What is the machine status?')">Machine status</button>
+      <button class="qq-btn" onclick="quickChat('What is the failure probability?')">Failure risk</button>
+      <button class="qq-btn" onclick="quickChat('Are there any anomalies?')">Anomalies</button>
+      <button class="qq-btn" onclick="quickChat('What maintenance action should I take?')">Maintenance</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB: HISTORY
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="tab-history">
+  <div class="section-title">📋 Prediction History</div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div class="card-header" style="margin:0">Recent Sensor Readings &amp; Predictions</div>
+      <button class="btn-secondary" onclick="loadHistory()">🔄 Refresh</button>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table" id="historyTable">
+        <thead>
+          <tr><th>#</th><th>Time</th><th>Temp</th><th>Vibration</th><th>Pressure</th><th>RPM</th><th>Condition</th><th>Confidence</th></tr>
+        </thead>
+        <tbody id="historyBody">
+          <tr><td colspan="8" style="text-align:center;color:#64748b">No records yet. Run an analysis first.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB: CHARTS
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="tab-charts">
+  <div class="section-title">📈 Model Visualisations</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">Temperature Distribution by Condition</div>
+      <img src="/static/img/temperature_dist.png" class="chart-img" alt="Temperature Distribution">
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Vibration Trend Analysis</div>
+      <img src="/static/img/vibration_trends.png" class="chart-img" alt="Vibration Trends">
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">XGBoost Confusion Matrix</div>
+      <img src="/static/img/confusion_matrix.png" class="chart-img" alt="Confusion Matrix">
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Feature Importance (XGBoost)</div>
+      <img src="/static/img/feature_importance.png" class="chart-img" alt="Feature Importance">
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Model Accuracy Comparison</div>
+      <img src="/static/img/model_comparison.png" class="chart-img" alt="Model Comparison">
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blood Donation | SmartCare+</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root{
+      --panel-bg: rgba(0,0,0,0.75);
+      --accent: #ff4d4d;
+      --muted: #ddd;
+      --radius: 10px;
+      --gap: 14px;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('blood-bg.jpg') no-repeat center center/cover;
+      color: #fff;
+      margin: 0;
+      padding: 0 12px;
+    }
+    .container {
+      background: var(--panel-bg);
+      padding: 28px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 1100px;
+      margin: 30px auto;
+      box-shadow: 0 0 30px rgba(255,0,0,0.25);
+      box-sizing: border-box;
+    }
+    h2 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    p.subtitle { text-align:center; color:var(--muted); margin-bottom:18px }
+    form { display: grid; gap: var(--gap); }
+
+    /* Two-column responsive grid for grouped fields */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+    }
+    .full { grid-column: 1 / -1; }
+
+    label { display:block; color:var(--muted); font-size:0.95rem; }
+    /* show red asterisk for required fields */
+    label.required:after { content: ' *'; color: #ff4d4d; margin-left:4px }
+    .checkbox-group label { display:inline-flex; align-items:center; gap:8px; margin-right:12px; color:var(--muted) }
+    .error { color: #ffb3b3; font-weight:700 }
+    
+    /* Consent/Privacy checkbox styling */
+    .consent-box { margin-top:8px; padding:12px; background:rgba(255,255,255,0.05); border-radius:6px }
+    .consent-box label { display:flex; align-items:flex-start; gap:10px; margin:0; color:var(--muted) }
+    .consent-box input[type="checkbox"] { margin-top:3px; cursor:pointer; flex-shrink:0; width:18px; height:18px }
+    .consent-box span { word-wrap:break-word; overflow-wrap:break-word; line-height:1.4 }
+    
+    /* Notification preferences grid */
+    .notify-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:8px }
+    .notify-grid label { display:flex; align-items:center; gap:8px; margin:0; color:var(--muted); font-weight:normal }
+    .notify-grid input[type="checkbox"] { cursor:pointer; flex-shrink:0; width:18px; height:18px }
+    
+    @media (max-width:768px) {
+      .notify-grid { grid-template-columns:1fr; gap:10px }
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: none;
+      border-radius: var(--radius);
+      margin-top: 6px;
+      box-sizing: border-box;
+      font-size: 0.95rem;
+    }
+    textarea { min-height:80px; resize:vertical }
+
+    .section { background: rgba(255,255,255,0.03); padding:12px; border-radius:8px }
+    .section h3 { margin:0 0 8px 0; color:var(--muted); font-size:1rem }
+
+    .actions { display:flex; gap:12px; align-items:center }
+    .actions .btn { flex:1 }
+
+    .btn {
+      margin-top: 4px;
+      background-color: var(--accent);
+      color: white;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn.secondary { background: #4a4a4a }
+    .btn:hover { filter:brightness(0.95) }
+
+    .message { text-align:center; margin-top: 6px; font-weight:600 }
+
+    @media (max-width:900px){ .grid-2 { grid-template-columns: 1fr } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🩸 Blood Donation Form</h2>
+
+    <p class="subtitle">Please provide accurate information to ensure safe donation and traceability.</p>
+    <form id="donationForm">
+      <div class="section">
+        <h3>Personal Details</h3>
+        <div class="grid-2">
+          <div>
+            <label for="donor_name" class="required">Full Name</label>
+            <input type="text" id="donor_name" placeholder="Enter full name">
+          </div>
+          <div>
+            <label for="age" class="required">Age</label>
+            <input type="number" id="age" min="0" placeholder="Age in years">
+          </div>
+          <div>
+            <label for="gender">Gender</label>
+            <select id="gender">
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob">
+          </div>
+          <div>
+            <label for="blood_group" class="required">Blood Group</label>
+            <select id="blood_group">
+              <option value="">Select</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option>
+              <option>AB+</option><option>AB-</option>
+            </select>
+          </div>
+          <div>
+            <label for="rh" class="required">Rh Factor</label>
+            <select id="rh">
+              <option value="">Select</option>
+              <option>Positive</option>
+              <option>Negative</option>
+            </select>
+          </div>
+          <div>
+            <label for="weight">Weight (kg)</label>
+            <input type="number" id="weight" step="0.1" placeholder="e.g., 70.5">
+          </div>
+          <div>
+            <label for="prev_donations">Previous Donations</label>
+            <input type="text" id="prev_donations" placeholder="e.g., 2 donations, last in 2023">
+          </div>
+          <div class="full">
+            <label for="last_donation_date">Last Donation Date</label>
+            <input type="date" id="last_donation_date">
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Contact Information</h3>
+        <div class="grid-2">
+          <div>
+            <label for="phone" class="required">Phone Number</label>
+            <input type="tel" id="phone" placeholder="Primary phone">
+          </div>
+          <div>
+            <label for="alt_phone">Alternate Number</label>
+            <input type="tel" id="alt_phone" placeholder="Alternate phone">
+          </div>
+          <div>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="you@example.com">
+          </div>
+          <div>
+            <label for="emergency_name">Emergency Contact Name</label>
+            <input type="text" id="emergency_name" placeholder="Emergency contact">
+          </div>
+          <div class="full">
+            <label for="emergency_phone">Emergency Contact Number</label>
+            <input type="tel" id="emergency_phone" placeholder="Emergency contact number">
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Location</h3>
+        <div class="grid-2">
+          <div>
+            <label for="address" class="required">Full Address</label>
+            <input type="text" id="address" placeholder="Street, building, landmark">
+          </div>
+          <div>
+            <label for="city" class="required">City</label>
+            <input type="text" id="city" placeholder="City">
+          </div>
+          <div>
+            <label for="district" class="required">District</label>
+            <input type="text" id="district" placeholder="District">
+          </div>
+          <div>
+            <label for="state" class="required">State</label>
+            <input type="text" id="state" placeholder="State">
+          </div>
+          <div>
+            <label for="pincode" class="required">Pincode</label>
+            <input type="text" id="pincode" placeholder="Postal code">
+          </div>
+          <div>
+            <label for="nearest_bank">Nearest Blood Bank</label>
+            <input type="text" id="nearest_bank" placeholder="Nearest blood bank">
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Hospital / Donation Center</h3>
+        <div class="grid-2">
+          <div>
+            <label for="hospital_name" class="required">Hospital Name</label>
+            <input type="text" id="hospital_name" placeholder="Hospital or center name">
+          </div>
+          <div>
+            <label for="blood_bank_name">Blood Bank Name</label>
+            <input type="text" id="blood_bank_name" placeholder="Blood bank name">
+          </div>
+          <div>
+            <label for="license_no">License Number</label>
+            <input type="text" id="license_no" placeholder="License or registration number">
+          </div>
+          <div>
+            <label for="technician">Doctor/Technician Name</label>
+            <input type="text" id="technician" placeholder="Name of staff who collected">
+          </div>
+          <div class="full">
+            <label for="donation_location">Donation Location</label>
+            <input type="text" id="donation_location" placeholder="Room / ward / outdoor camp">
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Donation Details</h3>
+        <div class="grid-2">
+          <div>
+            <label for="donation_date" class="required">Donation Date</label>
+            <input type="date" id="donation_date">
+          </div>
+          <div>
+            <label for="donation_time">Donation Time</label>
+            <input type="time" id="donation_time">
+          </div>
+          <div>
+            <label for="collected_blood_type" class="required">Collected Blood Type</label>
+            <select id="collected_blood_type">
+              <option value="">Select</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option>
+              <option>AB+</option><option>AB-</option>
+            </select>
+          </div>
+          <div>
+            <label for="units" class="required">Units (ml)</label>
+            <input type="number" id="units" placeholder="e.g., 450">
+          </div>
+          <div>
+            <label for="collection_method">Collection Method</label>
+            <input type="text" id="collection_method" placeholder="e.g., Whole blood / Apheresis">
+          </div>
+          <div>
+            <label for="bag_barcode">Bag / Barcode Number</label>
+            <input type="text" id="bag_barcode" placeholder="Bag or barcode ID">
+          </div>
+          <div>
+            <label for="storage_temp">Storage Temperature (°C)</label>
+            <input type="text" id="storage_temp" placeholder="e.g., 2-6">
+          </div>
+          <div>
+            <label for="expiry_date">Expiry Date</label>
+            <input type="date" id="expiry_date">
+          </div>
+          <div class="full">
+            <label for="blood_status">Current Blood Status</label>
+            <select id="blood_status">
+              <option value="Available">Available</option>
+              <option value="Quarantined">Quarantined</option>
+              <option value="Expired">Expired</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Medical & Screening</h3>
+        <div class="grid-2">
+          <div>
+            <label for="hemoglobin" class="required">Hemoglobin (g/dL)</label>
+            <input type="text" id="hemoglobin" placeholder="e.g., 13.5">
+          </div>
+          <div>
+            <label for="bp" class="required">Blood Pressure (mmHg)</label>
+            <input type="text" id="bp" placeholder="e.g., 120/80">
+          </div>
+          <div>
+            <label for="pulse">Pulse Rate (bpm)</label>
+            <input type="text" id="pulse" placeholder="e.g., 72">
+          </div>
+          <div>
+            <label for="temperature">Body Temperature (°C)</label>
+            <input type="text" id="temperature" placeholder="e.g., 36.6">
+          </div>
+          <div class="full">
+            <label for="medical_history">Medical History / Notes</label>
+            <textarea id="medical_history" placeholder="Any relevant medical history or contraindications"></textarea>
+          </div>
+          <div>
+            <label for="current_medications">Current Medications</label>
+            <input type="text" id="current_medications" placeholder="List medications">
+          </div>
+          <div>
+            <label for="eligibility" class="required">Eligibility Status</label>
+            <select id="eligibility">
+              <option value="Eligible">Eligible</option>
+              <option value="Deferred">Deferred</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="full">
+            <h4 style="color:var(--muted);margin:6px 0">Screening / Test Results</h4>
+            <div class="grid-2">
+              <div>
+                <label for="hiv">HIV</label>
+                <select id="hiv"><option>Negative</option><option>Positive</option><option>Pending</option></select>
+              </div>
+              <div>
+                <label for="hbsag">Hepatitis B (HBsAg)</label>
+                <select id="hbsag"><option>Negative</option><option>Positive</option><option>Pending</option></select>
+              </div>
+              <div>
+                <label for="hcv">Hepatitis C (HCV)</label>
+                <select id="hcv"><option>Negative</option><option>Positive</option><option>Pending</option></select>
+              </div>
+              <div>
+                <label for="syphilis">Syphilis</label>
+                <select id="syphilis"><option>Negative</option><option>Positive</option><option>Pending</option></select>
+              </div>
+              <div>
+                <label for="malaria">Malaria</label>
+                <select id="malaria"><option>Negative</option><option>Positive</option><option>Pending</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Consent, Privacy & Notifications</h3>
+        <div class="grid-2">
+          <!-- Donor Consent -->
+          <div class="full">
+            <label class="required">Donor Consent Agreement</label>
+            <div class="consent-box">
+              <label>
+                <input type="checkbox" id="consent_checkbox">
+                <span>I agree to donate blood as per prescribed medical guidelines and authorize testing and use of my blood donation.</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Privacy Agreement -->
+          <div class="full">
+            <label class="required">Privacy & Data Protection Agreement</label>
+            <div class="consent-box">
+              <label>
+                <input type="checkbox" id="privacy_checkbox">
+                <span>I accept the privacy policy, terms of service, and consent to the responsible use of my personal and health information.</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Notification Preferences -->
+          <div class="full">
+            <label class="required">Notification Preferences <span style="font-size:0.85rem;color:#ffb3b3;font-weight:normal">(select at least one)</span></label>
+            <div class="consent-box">
+              <div class="notify-grid">
+                <label>
+                  <input type="checkbox" name="notify_opt" id="notify_sms" value="SMS">
+                  <span>📱 SMS Alerts</span>
+                </label>
+                <label>
+                  <input type="checkbox" name="notify_opt" id="notify_wa" value="WhatsApp">
+                  <span>💬 WhatsApp Alerts</span>
+                </label>
+                <label>
+                  <input type="checkbox" name="notify_opt" id="notify_email" value="Email">
+                  <span>📧 Email Alerts</span>
+                </label>
+              </div>
+              <p style="margin:10px 0 0 0;font-size:0.85rem;color:#bbb;line-height:1.4">You'll receive alerts about blood expiry dates, inventory updates, and emergency donation requests.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Verification & Tracking</h3>
+        <div class="grid-2">
+          <div>
+            <label for="verified_by">Verified By (Staff Name)</label>
+            <input type="text" id="verified_by" placeholder="Staff name">
+          </div>
+          <div>
+            <label for="verified_at">Verification Timestamp</label>
+            <input type="datetime-local" id="verified_at">
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn" onclick="submitDonation()">Submit Donation</button>
+        <button type="button" class="btn secondary" onclick="document.getElementById('donationForm').reset()">Reset</button>
+      </div>
+      <div class="message" id="message"></div>
+    </form>
+  </div>
+
+  <script>
+    function getVal(id){ const el=document.getElementById(id); return el ? el.value : '' }
+    function isChecked(id){ const el=document.getElementById(id); return el ? el.checked : false }
+    function getCheckedValuesByName(name){ return Array.from(document.querySelectorAll('input[name="'+name+'"]:checked')).map(i=>i.value) }
+
+    function validateRequiredFields(){
+      const required = {
+        donor_name: 'Full Name',
+        age: 'Age',
+        blood_group: 'Blood Group',
+        rh: 'RH Factor',
+        phone: 'Phone Number',
+        address: 'Full Address',
+        city: 'City',
+        district: 'District',
+        state: 'State',
+        pincode: 'Pincode',
+        hospital_name: 'Hospital Name',
+        donation_date: 'Donation Date',
+        collected_blood_type: 'Blood Type Collected',
+        units: 'Units Donated (ml)',
+        hemoglobin: 'Hemoglobin Level',
+        bp: 'Blood Pressure',
+        eligibility: 'Eligibility Status'
+      };
+      const missing = [];
+      for(const id in required){
+        const val = getVal(id);
+        if(val === null || String(val).trim() === '') missing.push(required[id]);
+      }
+
+      // check consent & privacy checkboxes
+      if(!isChecked('consent_checkbox')) missing.push('Donor Consent Agreement');
+      if(!isChecked('privacy_checkbox')) missing.push('Privacy Agreement');
+
+      // check at least one notification option
+      const notifs = getCheckedValuesByName('notify_opt');
+      if(notifs.length === 0) missing.push('At least one Notification Preference (SMS/WhatsApp/Email)');
+
+      return { ok: missing.length === 0, missing };
+    }
+
+    async function submitDonation() {
+      const validation = validateRequiredFields();
+      const msgEl = document.getElementById('message');
+      if(!validation.ok){
+        msgEl.innerHTML = 'Please complete required fields:<br><ul style="text-align:left;display:inline-block;margin:8px 0;color:#ffb3b3">' + validation.missing.map(m=>'<li>'+m+'</li>').join('') + '</ul>';
+        msgEl.style.color = '#ffb3b3';
+        return;
+      }
+
+      const notifyPrefs = getCheckedValuesByName('notify_opt');
+
+      const data = {
+        // Personal
+        donor_name: getVal('donor_name'), age: getVal('age'), gender: getVal('gender'), dob: getVal('dob'), blood_group: getVal('blood_group'), rh: getVal('rh'), weight: getVal('weight'), prev_donations: getVal('prev_donations'), last_donation_date: getVal('last_donation_date'),
+        // Contact
+        phone: getVal('phone'), alt_phone: getVal('alt_phone'), email: getVal('email'), emergency_name: getVal('emergency_name'), emergency_phone: getVal('emergency_phone'),
+        // Location
+        address: getVal('address'), city: getVal('city'), district: getVal('district'), state: getVal('state'), pincode: getVal('pincode'), nearest_bank: getVal('nearest_bank'),
+        // Hospital
+        hospital_name: getVal('hospital_name'), blood_bank_name: getVal('blood_bank_name'), license_no: getVal('license_no'), technician: getVal('technician'), donation_location: getVal('donation_location'),
+        // Donation details
+        donation_date: getVal('donation_date'), donation_time: getVal('donation_time'), collected_blood_type: getVal('collected_blood_type'), units: getVal('units'), collection_method: getVal('collection_method'), bag_barcode: getVal('bag_barcode'), storage_temp: getVal('storage_temp'), expiry_date: getVal('expiry_date'), blood_status: getVal('blood_status'),
+        // Medical & screening
+        hemoglobin: getVal('hemoglobin'), bp: getVal('bp'), pulse: getVal('pulse'), temperature: getVal('temperature'), medical_history: getVal('medical_history'), current_medications: getVal('current_medications'), eligibility: getVal('eligibility'),
+        hiv: getVal('hiv'), hbsag: getVal('hbsag'), hcv: getVal('hcv'), syphilis: getVal('syphilis'), malaria: getVal('malaria'),
+        // Verification & tracking
+        verified_by: getVal('verified_by'), verified_at: getVal('verified_at'), consent: isChecked('consent_checkbox') ? 'Accepted' : 'Declined', privacy_accept: isChecked('privacy_checkbox') ? 'Yes' : 'No', notify_pref: notifyPrefs.join(',')
+      };
+
+      try{
+        const res = await fetch('/api/add_blood_donation', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+        if(!res.ok) throw new Error('Network response was not ok');
+        const result = await res.json();
+        msgEl.innerText = result.message || 'Donation saved';
+        msgEl.style.color = '#00ff99';
+        // Optionally reset or keep data based on server response
+      }catch(err){
+        msgEl.innerText = 'Error: '+err.message;
+        msgEl.style.color = '#ffb3b3';
+      }
+    }
+  </script>
+</body>
+</html>

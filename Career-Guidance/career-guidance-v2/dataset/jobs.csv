@@ -1,0 +1,8 @@
+job_id,job_role,stream,required_skills,average_salary
+J001,Data Scientist,Science,Python;Machine Learning;Statistics,12 LPA
+J002,Software Developer,Science,Python;Data Structures;Algorithms,10 LPA
+J003,Graphic Designer,Arts,Creativity;Photoshop;Drawing,5 LPA
+J004,Animator,Arts,Animation;Creativity;Software Skills,6 LPA
+J005,Content Writer,Arts,Writing;SEO;Communication,4 LPA
+J006,Accountant,Commerce,Accounting;Excel,6 LPA
+J007,Digital Marketer,Commerce,SEO;Content Writing;Analytics,5 LPA

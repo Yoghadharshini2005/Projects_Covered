@@ -1,0 +1,10 @@
+course_id,course_name,stream,category,difficulty,duration,skills_gained
+C001,Bachelor of Fine Arts,Arts,Painting,Medium,3 Years,Creativity;Drawing;Color Theory
+C002,B.A English Literature,Arts,Humanities,Easy,3 Years,Writing;Critical Thinking
+C003,Graphic Design Course,Arts,Design,Easy,6 Months,Photoshop;Creativity;Illustration
+C004,Music Production,Arts,Music,Medium,1 Year,Audio Editing;Creativity
+C005,Animation Course,Arts,Design,Medium,1 Year,Animation;Creativity;Software Skills
+C006,B.Sc Computer Science,Science,Technology,Medium,3 Years,Python;Data Structures
+C007,Data Science Course,Science,AI,Hard,6 Months,Python;ML;Statistics
+C008,B.Com Accounting,Commerce,Finance,Medium,3 Years,Accounting;Excel
+C009,Digital Marketing,Commerce,Marketing,Easy,6 Months,SEO;Content Writing
