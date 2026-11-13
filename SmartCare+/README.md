@@ -2,350 +2,305 @@
 
 ## Overview
 
-**SmartCare+** is a comprehensive hospital management system designed to connect hospitals, donors, and communities for efficient blood and organ donation coordination. The platform enables seamless management of blood inventory, emergency donation requests, and organ matching across multiple hospitals.
+**SmartCare+** is a hospital management and healthcare coordination platform designed to connect hospitals, blood donors, and communities for efficient blood and organ donation management.
 
----
+The system helps manage blood inventory, record donations, handle emergency blood requests, and identify potential organ matches across multiple hospitals through an interactive web interface.
 
-## Features
+## ✨ Features
 
 ### 🩸 Blood Donation Management
-- **Blood Stock Tracking**: Monitor blood inventory by type (A+, A-, B+, B-, AB+, AB-, O+, O-) across hospitals
-- **Donation Recording**: Comprehensive form to record blood donations with donor details
-- **Expiry Alerts**: Automatic notifications for blood units expiring within specified timeframes
-- **CSV Export**: All donations are recorded in a detailed CSV file for auditing and analysis
-- **Blood Bank Integration**: Support for multiple hospitals and blood banks
+- Track blood stock across multiple hospitals.
+- Support for all major blood groups (A+, A-, B+, B-, AB+, AB-, O+, O-).
+- Record blood donations with donor details.
+- Track blood expiry dates.
+- Generate expiry alerts for blood units.
+- Maintain donation records using CSV files.
 
 ### 🫀 Organ Matching System
-- **Donor-Recipient Matching**: Intelligent matching based on blood group compatibility
-- **Organ Database**: Track available organs (Kidney, Liver, Heart, Lungs, Pancreas, Cornea) from donors
-- **Compatibility Verification**: Ensure blood group compatibility between donors and recipients
-- **Real-time Notifications**: Instant alerts when matches are found
+- Match potential donors and recipients based on blood group compatibility.
+- Manage organ information.
+- Support different organ categories.
+- Display potential donor-recipient matches.
 
 ### 🚨 Emergency Donation Requests
-- **Urgent Requests Management**: Create and manage emergency blood donation requests
-- **Urgency Levels**: Categorize requests by urgency (High, Medium, Low)
-- **Status Tracking**: Monitor request status (Pending, Processing, Fulfilled, etc.)
-- **Contact Information**: Store emergency contact numbers for quick coordination
-- **Request History**: View all past and current emergency requests
+- Create emergency blood donation requests.
+- Categorize requests by urgency (High, Medium, Low).
+- Track request status.
+- Store hospital and contact information.
+- View existing emergency requests.
 
 ### 📊 Dashboard & Analytics
-- **Live Statistics**: Real-time display of:
-  - Total units available
-  - Total registered donors
-  - Active emergency requests
-  - Available organs
-  - Today's donations
-- **Blood Stock Visualization**: Table view of current blood inventory by hospital
-- **Donor Leaderboard**: Top-performing hospitals based on donation volume
-- **Hospital Comparison**: Compare blood stock across multiple hospitals
+- View blood inventory information.
+- Monitor donation records.
+- View emergency requests.
+- Compare hospital donation performance.
+- Display hospital donation leaderboard.
 
 ### 🏨 Multi-Hospital Support
-- **Hospital Profiles**: Support for both government and private hospitals
-- **Pre-configured Hospitals**:
-  - Coimbatore Medical College and Hospital – Coimbatore
-  - KMCH (Kovai Medical Center and Hospital) – Coimbatore
-- **Expandable System**: Easy addition of new hospitals to the network
+- Supports government and private hospitals.
+- Includes Coimbatore Medical College and Hospital.
+- Includes KMCH (Kovai Medical Center and Hospital).
+- Supports adding additional hospitals.
 
----
+## 📁 Project Structure
 
-## Project Structure
-
+```text
+SmartCare+/
+│
+└── backend1/
+    ├── app.py
+    ├── requirements.txt
+    ├── database.db
+    ├── blood_donations.csv
+    │
+    ├── data/
+    │   └── donors.csv
+    │
+    └── static/
+        ├── blood-donation.css
+        ├── blood-donation.html
+        ├── dashboard.css
+        ├── dashboard.html
+        ├── emergency-requests.css
+        ├── emergency-requests.html
+        ├── index.css
+        ├── index.html
+        ├── organ-matching.css
+        ├── organ-matching.html
+        └── script.js
 ```
-SmartCare+ 2/
-├── backend/
-│   ├── app.py                    # Flask backend application
-│   ├── requirements.txt          # Python dependencies
-│   ├── database.db              # SQLite database (auto-created)
-│   ├── blood_donations.csv      # Donation records export
-│   ├── data/
-│   │   └── donors.csv           # Sample donor data
-│   └── static/
-│       ├── index.html           # Login page
-│       ├── dashboard.html       # Main dashboard
-│       ├── blood-donation.html  # Blood donation form
-│       ├── organ-matching.html  # Organ matching interface
-│       ├── emergency-requests.html  # Emergency requests management
-│       ├── index.css            # Login page styling
-│       ├── dashboard.css        # Dashboard styling
-│       ├── blood-donation.css   # Blood donation form styling
-│       ├── organ-matching.css   # Organ matching styling
-│       ├── emergency-requests.css  # Emergency requests styling
-│       └── script.js            # Frontend JavaScript logic
-└── README.md                     # This file
-```
 
----
+*Note: The SQLite database and CSV files are used for storing application data. The database is initialized by the application.*
 
-## Technology Stack
+## 🛠️ Technology Stack
 
 ### Backend
-- **Framework**: Flask 3.1.2
-- **Database**: SQLite
-- **CORS**: flask-cors 6.0.1
-- **Language**: Python 3.x
+- Python 3
+- Flask 3.1.2
+- Flask-CORS 6.0.1
+- SQLite
 
 ### Frontend
-- **HTML5**: Semantic markup
-- **CSS3**: Responsive design
-- **JavaScript**: Dynamic interactions and API communication
-- **JSON**: Data format for API communication
+- HTML5
+- CSS3
+- JavaScript
+- JSON
 
-### Key Dependencies
-```
-Flask==3.1.2
-flask-cors==6.0.1
-Jinja2==3.1.6
-Werkzeug==3.1.3
-```
+### Data Storage
+- SQLite Database
+- CSV Files
 
----
-
-## Installation & Setup
+## ⚙️ Installation & Setup
 
 ### Prerequisites
-- Python 3.7 or higher
-- pip (Python package manager)
+- Python 3.9 or higher
+- pip package manager
+- Git
 - Modern web browser
 
-### Step 1: Install Dependencies
+### 1. Clone the Repository
+
 ```bash
-cd backend
+git clone https://github.com/Yoghadharshini2005/Projects_Covered.git
+```
+
+### 2. Navigate to the Project Directory
+
+```bash
+cd Projects_Covered/SmartCare+/backend1
+```
+
+### 3. Create a Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+### 4. Activate the Virtual Environment
+
+**Windows:**
+
+```bash
+venv\Scripts\activate
+```
+
+**macOS / Linux:**
+
+```bash
+source venv/bin/activate
+```
+
+### 5. Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-### Step 2: Run the Application
+### 6. Run the Application
+
 ```bash
 python app.py
 ```
 
-The application will start on `http://localhost:5000`
+### 7. Access the Application
 
-### Step 3: Access the Web Interface
-Open your browser and navigate to:
+Open your browser and visit:
+
+```text
+http://127.0.0.1:5000
 ```
-http://localhost:5000
-```
 
----
+The SmartCare+ application will be available locally.
 
-## Usage Guide
+## 🖥️ Usage Guide
 
 ### 1. Login
-- Select hospital type (Government/Private)
-- Select hospital name from the dropdown
-- Enter email and password
-- Click "Login" to access the dashboard
+- Select the hospital type.
+- Select the hospital name.
+- Enter the required login details.
+- Access the application dashboard.
 
 ### 2. Dashboard
-View real-time statistics:
-- Total blood units available
-- Registered donors count
-- Active emergency requests
-- Available organs
-- Today's donations
+View hospital and donation-related information through the dashboard.
 
 ### 3. Blood Donation Management
-**Recording a Donation:**
-- Navigate to "Blood Donation" section
-- Fill in donor details (name, age, gender, blood type)
-- Enter contact information and address
-- Specify number of units collected
-- Automatically calculates 42-day expiry date
-- Submit to record the donation
+- Navigate to the Blood Donation section.
+- Enter donor information.
+- Provide blood group and donation details.
+- Submit the donation record.
 
 ### 4. Emergency Requests
-**Creating an Emergency Request:**
-- Go to "Emergency Requests"
-- Specify hospital, blood type, and units needed
-- Set urgency level (High/Medium/Low)
-- Provide contact information
-- Track request status in real-time
-
-**Managing Requests:**
-- View all pending and completed requests
-- Update request status as donations arrive
-- Monitor urgency-based prioritization
+- Navigate to Emergency Requests.
+- Enter the required blood group and units.
+- Select the urgency level.
+- Submit and track the request.
 
 ### 5. Organ Matching
-**Finding Organ Matches:**
-- Navigate to "Organ Matching"
-- Enter recipient's blood group
-- Specify required organ type
-- System searches compatible donors
-- View matched donor information
+- Navigate to Organ Matching.
+- Enter recipient blood group details.
+- Select the required organ.
+- View potential matching donors.
 
----
+## 🔌 API Endpoints
 
-## API Endpoints
+The Flask backend provides the following API routes.
 
 ### Blood Management
-- `GET /api/blood_stock` - Retrieve all blood inventory
-- `POST /api/add_blood` - Add blood to inventory
-- `GET /api/expiry_alerts` - Get blood expiring within X days
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/blood_stock` | Retrieve blood inventory |
+| POST | `/api/add_blood` | Add blood stock |
+| GET | `/api/expiry_alerts` | Retrieve expiry alerts |
 
 ### Emergency Requests
-- `GET /api/requests` - Get all donation requests
-- `POST /api/add_donation_request` - Create emergency request
-- `POST /api/update_request_status` - Update request status
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/requests` | Retrieve donation requests |
+| POST | `/api/add_donation_request` | Create a donation request |
+| POST | `/api/update_request_status` | Update request status |
 
 ### Organ Matching
-- `POST /api/add_organ` - Add organ to database
-- `POST /api/organ_match` - Find compatible organ matches
-- `GET /api/donors` - Get all registered donors
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/add_organ` | Add organ information |
+| POST | `/api/organ_match` | Find potential organ matches |
+| GET | `/api/donors` | Retrieve donor information |
 
 ### Donations & Analytics
-- `POST /api/add_blood_donation` - Record blood donation
-- `POST /api/donate` - Add donor information
-- `GET /api/leaderboard` - Get top hospital performers
 
-### Static Files
-- `GET /` - Home/Login page
-- `GET /dashboard` - Main dashboard
-- `GET /blood_donation` - Blood donation page
-- `GET /organ_donation` - Organ matching page
-- `GET /emergency_request` - Emergency requests page
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/add_blood_donation` | Record a blood donation |
+| POST | `/api/donate` | Add donor information |
+| GET | `/api/leaderboard` | Retrieve hospital leaderboard |
 
----
+### Web Routes
 
-## Database Schema
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/` | Login page |
+| GET | `/dashboard` | Dashboard |
+| GET | `/blood_donation` | Blood donation page |
+| GET | `/organ_donation` | Organ matching page |
+| GET | `/emergency_request` | Emergency requests page |
 
-### hospitals
-- `id`: Primary key
-- `name`: Hospital name (unique)
-- `type`: Hospital type (government/private)
+## 🗄️ Database
 
-### blood_stock
-- `id`: Primary key
-- `hospital_name`: Associated hospital
-- `blood_type`: Blood type (A+, B+, etc.)
-- `units`: Number of units available
-- `expiry_date`: Expiry date of blood
+SmartCare+ uses SQLite for storing application information.
 
-### donation_requests
-- `id`: Primary key
-- `hospital_name`: Requesting hospital
-- `blood_type`: Required blood type
-- `units_needed`: Number of units requested
-- `urgency_level`: Urgency level (High/Medium/Low)
-- `date`: Request date
-- `contact`: Contact number
-- `status`: Request status (Pending/Fulfilled/etc.)
+The application initializes the following database tables:
 
-### organ_matching
-- `id`: Primary key
-- `hospital_name`: Hospital name
-- `organ_type`: Type of organ
-- `donor_blood`: Donor blood group
-- `recipient_blood`: Recipient blood group
+- **hospitals** – Hospital information.
+- **blood_stock** – Blood inventory details.
+- **donation_requests** – Emergency donation requests.
+- **organ_matching** – Organ matching information.
+- **donors** – Donor information.
 
-### donors
-- `id`: Primary key
-- `name`: Donor name
-- `age`: Donor age
-- `blood_group`: Blood group
-- `units`: Units donated
-- `donation_date`: Date of donation
-- `hospital`: Associated hospital
-- `organ`: Available organ type
+The database is stored in `database.db`.
 
----
+## 📄 Data Files
 
-## Sample Data
+The project includes CSV files for data management:
 
-The system comes pre-populated with:
-- **Sample Donors**: 7 registered donors with various organs
-- **Emergency Requests**: 5 sample requests from different hospitals
-- **Hospitals**: Coimbatore Medical College and KMCH
+- `blood_donations.csv` – Blood donation records.
+- `data/donors.csv` – Donor information.
 
-All sample data is automatically initialized when the application starts for the first time.
+## 🔍 Expiry Management
 
----
+- Tracks blood unit expiry dates.
+- Identifies blood units approaching expiry.
+- Provides expiry-related alerts to help reduce blood wastage.
 
-## Features in Detail
+## 📈 Hospital Performance
 
-### 🔍 Expiry Management
-- Tracks expiry dates for all blood units
-- Generates alerts for units expiring within 3 days (configurable)
-- Helps prevent wastage of precious blood resources
+- Displays hospital donation leaderboard.
+- Supports comparison of hospital blood inventory.
+- Helps monitor donation activities.
 
-### 📈 Performance Metrics
-- Leaderboard showing top 5 hospitals by donation volume
-- Track donor participation and contribution
-- Monitor emergency request response times
+## 🔮 Future Enhancements
 
-### 🔐 Data Privacy
-- Hospital-specific data isolation
-- Secure storage of contact information
-- CSV export for record keeping and auditing
+- Secure authentication with role-based access control.
+- SMS and email notifications.
+- Mobile application integration.
+- Machine learning-based blood demand forecasting.
+- Integration with external blood bank networks.
+- Automated report generation.
+- Geolocation-based hospital and donor tracking.
+- Online donation appointment scheduling.
 
-### 🌐 Multi-Hospital Coordination
-- Unified dashboard for network-wide visibility
-- Inter-hospital blood transfer coordination
-- Organ matching across hospital boundaries
-
----
-
-## Future Enhancements
-
-- **User Authentication**: Implement secure login with role-based access control
-- **SMS/Email Notifications**: Automated alerts for urgent requests
-- **Mobile App**: Native mobile application for on-the-go access
-- **Advanced Analytics**: Machine learning-based demand forecasting
-- **Integration**: Connect with national blood bank networks
-- **Report Generation**: Automated health and compliance reports
-- **Geolocation**: Map-based hospital and donor location tracking
-- **Appointment Scheduling**: Book donation appointments in advance
-
----
-
-## Troubleshooting
+## 🚀 Troubleshooting
 
 ### Database Issues
-- Delete `database.db` to reset the database
-- Re-run the application to regenerate with sample data
+Check whether the application has permission to access its database file and initialize the database.
 
 ### Port Already in Use
-- Change the port in `app.py`: `app.run(debug=True, port=5001)`
+If port 5000 is already occupied, configure the Flask application to use another available port.
 
-### CORS Errors
-- Ensure `flask-cors` is installed: `pip install flask-cors`
+### Dependency Issues
+Install the project dependencies again:
+
+```bash
+pip install -r requirements.txt
+```
 
 ### Static Files Not Loading
-- Verify the `static` folder path is correct
-- Check file permissions
+Verify that the `static` folder and its files are present in the project directory.
 
----
+## 👩‍💻 Author
 
-## Contributing
+**Yoghadharshini R**
 
-To contribute to SmartCare+:
-1. Review the current codebase
-2. Make necessary improvements or bug fixes
-3. Test thoroughly
-4. Document changes
-5. Submit for review
+B.Tech – Artificial Intelligence and Data Science
 
----
+GitHub: [Yoghadharshini2005](https://github.com/Yoghadharshini2005)
 
-## License
+## 📌 Project Purpose
 
-This project is developed for educational and healthcare coordination purposes.
+Developed as an engineering project to support healthcare coordination through blood donation management, organ matching, and emergency request handling.
 
----
+**SmartCare+ – Connecting Hearts, Saving Lives ❤️**
 
-## Contact & Support
-
-For issues, questions, or suggestions regarding SmartCare+, please contact the development team.
-
----
-
-## Acknowledgments
-
-Built for efficient coordination between:
-- 🏥 Healthcare Institutions
-- 👥 Blood Donors
-- 🫀 Organ Donors
-- 👨‍⚕️ Medical Professionals
-- 💙 Communities
-
-**SmartCare+ - Connecting Hearts, Saving Lives** ❤️
+⭐ If you find this project useful, consider giving the repository a star!
