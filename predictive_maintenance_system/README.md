@@ -1,33 +1,55 @@
 # 🏭 Predictive Maintenance System for Machine Health Monitoring
 
-A complete final-year engineering project that uses machine learning to predict machine failures
-from sensor data (temperature, vibration, pressure, RPM).
+A machine learning-based predictive maintenance web application that monitors industrial machine health using sensor data such as temperature, vibration, pressure, and RPM.
+
+The system predicts machine conditions, identifies potential failures, provides root cause analysis, and supports maintenance decision-making through an interactive web dashboard.
+
+---
+
+## ✨ Key Features
+
+- **Machine Health Prediction:** Predicts whether a machine is Healthy, Warning, or Failure.
+- **Machine Learning Models:** Uses XGBoost and Logistic Regression classifiers.
+- **Sensor Monitoring:** Analyzes temperature, vibration, pressure, and RPM.
+- **Root Cause Analysis:** Identifies probable reasons behind machine failures.
+- **Threshold Alerts:** Highlights sensor readings that exceed defined limits.
+- **Digital Twin Simulation:** Simulates machine degradation over a 24-hour period.
+- **AI Maintenance Assistant:** Provides maintenance-related answers through a rule-based chatbot.
+- **Prediction History:** Stores previous predictions using SQLite.
+- **Performance Visualization:** Displays model evaluation and sensor analysis charts.
+- **Interactive Dashboard:** Provides machine health insights through a web interface.
 
 ---
 
 ## 📁 Project Structure
 
-```
-predictive_maintenance/
-├── app.py                  ← Flask backend (all API endpoints)
-├── model.py                ← ML training script (XGBoost + Logistic Regression)
-├── requirements.txt        ← Python dependencies
+```text
+predictive_maintenance_system/
+│
+├── app.py
+├── model.py
+├── requirements.txt
+├── README.md
 │
 ├── dataset/
-│   └── sensor_data.csv     ← Auto-generated synthetic sensor data (3000 rows)
+│   └── sensor_data.csv
 │
 ├── saved_model/
-│   ├── xgb_model.pkl       ← Trained XGBoost model
-│   ├── scaler.pkl          ← Fitted StandardScaler
-│   └── metrics.json        ← Accuracy & training metrics
+│   ├── xgb_model.pkl
+│   ├── scaler.pkl
+│   └── metrics.json
 │
 ├── templates/
-│   └── index.html          ← Main HTML dashboard
+│   └── index.html
 │
 ├── static/
-│   ├── css/style.css       ← Stylesheet (industrial dark theme)
-│   ├── js/app.js           ← Frontend JavaScript
-│   └── img/                ← Auto-generated visualisation plots
+│   ├── css/
+│   │   └── style.css
+│   │
+│   ├── js/
+│   │   └── app.js
+│   │
+│   └── img/
 │       ├── temperature_dist.png
 │       ├── vibration_trends.png
 │       ├── confusion_matrix.png
@@ -35,209 +57,327 @@ predictive_maintenance/
 │       └── model_comparison.png
 │
 └── logs/
-    └── maintenance.db      ← SQLite database (auto-created)
+    └── maintenance.db
 ```
+
+*Note: Dataset, trained model files, visualization plots, and database files may be generated automatically when the corresponding scripts or application are executed.*
 
 ---
 
-## ⚙️ Setup & Installation
+## 🛠️ Tech Stack
 
-### 1. Clone / Download the project
+| Layer | Technologies |
+|---|---|
+| Programming Language | Python |
+| Machine Learning | XGBoost, Scikit-learn |
+| Backend | Flask, Flask-CORS |
+| Data Processing | Pandas, NumPy |
+| Database | SQLite |
+| Visualization | Matplotlib, Seaborn |
+| Frontend | HTML5, CSS3, JavaScript |
+| Charts | Chart.js |
+| Model Persistence | Joblib |
+
+---
+
+## ⚙️ Installation and Setup
+
+### Prerequisites
+
+Make sure you have installed:
+
+- Python 3.9 or higher
+- Git
+- pip package manager
+
+### 1. Clone the Repository
+
 ```bash
-cd predictive_maintenance
+git clone https://github.com/Yoghadharshini2005/Projects_Covered.git
 ```
 
-### 2. Create a virtual environment (recommended)
+### 2. Navigate to the Project Directory
+
+```bash
+cd Projects_Covered/predictive_maintenance_system
+```
+
+### 3. Create a Virtual Environment
+
 ```bash
 python -m venv venv
-source venv/bin/activate        # Linux / macOS
-venv\Scripts\activate           # Windows
 ```
 
-### 3. Install dependencies
+### 4. Activate the Virtual Environment
+
+**Windows:**
+
+```bash
+venv\Scripts\activate
+```
+
+**macOS / Linux:**
+
+```bash
+source venv/bin/activate
+```
+
+### 5. Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Train the ML models
+### 6. Train the Machine Learning Models
+
 ```bash
 python model.py
 ```
-This will:
-- Generate `dataset/sensor_data.csv` (3000 labelled sensor records)
-- Train XGBoost and Logistic Regression classifiers
-- Print accuracy, classification report
-- Save plots to `static/img/`
-- Save model artifacts to `saved_model/`
 
-Expected output:
-```
-✓ XGBoost Accuracy        : 99.83%
-✓ Logistic Reg. Accuracy  : 99.17%
-```
+The training script is designed to:
 
-### 5. Start the Flask server
+- Generate synthetic sensor data (if supported by the script).
+- Train XGBoost and Logistic Regression classifiers.
+- Evaluate model performance.
+- Generate visualization plots.
+- Save trained model artifacts and metrics.
+
+### 7. Start the Flask Application
+
 ```bash
 python app.py
 ```
 
-### 6. Open in browser
-```
-http://localhost:5000
-```
+### 8. Open the Dashboard
+
+Open your browser and visit:
+
+**http://127.0.0.1:5000**
 
 ---
 
 ## 🖥️ Dashboard Features
 
-| Tab | Description |
-|-----|-------------|
-| **Dashboard** | KPI overview, model performance, sensor thresholds |
-| **Analyse** | Enter sensor values → get ML prediction + RCA |
-| **Digital Twin** | 24-hour degradation simulation with charts |
-| **AI Assistant** | Rule-based chatbot for maintenance Q&A |
-| **History** | All predictions stored in SQLite |
-| **Charts** | Visualisation plots from training |
+| Module | Description |
+|---|---|
+| Dashboard | KPI overview, model performance, and sensor thresholds |
+| Analyse | Enter sensor values and receive machine predictions with root cause analysis |
+| Digital Twin | 24-hour machine degradation simulation with charts |
+| AI Assistant | Rule-based chatbot for maintenance-related questions |
+| History | View previously stored machine predictions |
+| Charts | Explore sensor and model visualization plots |
 
 ---
 
-## 🔌 API Endpoints
+## 🤖 Machine Learning Workflow
+
+The system follows these steps to predict machine health:
+
+1. **Data Generation:** Creates synthetic sensor records labelled as Healthy, Warning, or Failure.
+2. **Data Preprocessing:** Handles missing values and prepares sensor features.
+3. **Feature Scaling:** Applies StandardScaler to normalize input features.
+4. **Model Training:** Trains XGBoost and Logistic Regression classifiers.
+5. **Model Evaluation:** Evaluates model performance using classification metrics.
+6. **Prediction:** Uses the trained XGBoost classifier to predict machine conditions.
+7. **Confidence Estimation:** Uses prediction probabilities to estimate confidence.
+8. **Root Cause Analysis:** Applies rule-based sensor thresholds to identify probable failure causes.
+
+### Machine Condition Classes
+
+| Class | Condition | Description |
+|---|---|---|
+| 0 | Healthy | Sensor readings are within normal operating ranges |
+| 1 | Warning | One or more sensor readings are approaching critical limits |
+| 2 | Failure | Critical sensor readings indicate a potential machine failure |
+
+---
+
+## 📊 Model Performance
+
+The project evaluates two machine learning algorithms:
+
+- XGBoost Classifier
+- Logistic Regression Classifier
+
+**Reported training results:**
+
+| Model | Reported Accuracy |
+|---|---:|
+| XGBoost | 99.83% |
+| Logistic Regression | 99.17% |
+
+*Note: These are the reported results from the project description. Actual performance may vary depending on the dataset, train-test split, and training configuration. Refer to `saved_model/metrics.json` for the generated evaluation metrics.*
+
+---
+
+## 📈 Sample Sensor Values
+
+| Scenario | Temperature | Vibration | Pressure | RPM |
+|---|---:|---:|---:|---:|
+| Healthy | 52°C | 0.28g | 102 PSI | 1510 |
+| Warning | 74°C | 0.72g | 84 PSI | 1260 |
+| Failure | 102°C | 1.85g | 55 PSI | 880 |
+
+These values represent example sensor readings for different machine conditions.
+
+---
+
+## 🔌 REST API Endpoints
 
 | Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Main dashboard UI |
+|---|---|---|
+| GET | `/` | Main dashboard interface |
 | POST | `/api/predict` | Predict machine condition |
-| POST | `/api/chat` | AI chatbot |
-| POST | `/api/digital-twin` | Run 24h simulation |
-| GET | `/api/history` | Recent predictions |
-| GET | `/api/stats` | System statistics |
-| GET | `/api/metrics` | Model metrics |
+| POST | `/api/chat` | Interact with maintenance assistant |
+| POST | `/api/digital-twin` | Run 24-hour simulation |
+| GET | `/api/history` | Retrieve recent predictions |
+| GET | `/api/stats` | Retrieve system statistics |
+| GET | `/api/metrics` | Retrieve model performance metrics |
 
-### POST /api/predict — Example
+### 1. Machine Prediction API
+
+**Endpoint:** `POST /api/predict`
+
+Example request:
+
 ```bash
-curl -X POST http://localhost:5000/api/predict \
-  -H "Content-Type: application/json" \
-  -d '{"temperature": 95, "vibration": 1.9, "pressure": 58, "rpm": 870}'
+curl -X POST http://127.0.0.1:5000/api/predict \
+-H "Content-Type: application/json" \
+-d '{"temperature":95,"vibration":1.9,"pressure":58,"rpm":870}'
 ```
 
-**Response:**
+Example response:
+
 ```json
 {
   "success": true,
   "result": {
     "condition": "Failure",
     "confidence": 99.7,
-    "probabilities": { "Healthy": 0.1, "Warning": 0.2, "Failure": 99.7 },
+    "probabilities": {
+      "Healthy": 0.1,
+      "Warning": 0.2,
+      "Failure": 99.7
+    },
     "root_causes": [
       {
         "cause": "Overheating",
         "sensor": "Temperature",
         "value": "95.0°C",
-        "explanation": "Motor/bearing temperature exceeds safe limits...",
-        "action": "Shut down immediately. Inspect cooling system..."
+        "explanation": "Motor or bearing temperature exceeds safe limits.",
+        "action": "Inspect the cooling system and follow maintenance safety procedures."
       }
     ],
     "threshold_alerts": [
-      { "sensor": "temperature", "level": "FAILURE", "msg": "Critical overheating: 95.0°C" }
+      {
+        "sensor": "temperature",
+        "level": "FAILURE",
+        "msg": "Critical overheating detected."
+      }
     ]
   }
 }
 ```
 
-### POST /api/chat — Example
+*The response above is an illustrative example. Actual response fields and values depend on the application implementation.*
+
+### 2. Maintenance Chat API
+
+**Endpoint:** `POST /api/chat`
+
+Example request:
+
 ```bash
-curl -X POST http://localhost:5000/api/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "What is the machine status?"}'
+curl -X POST http://127.0.0.1:5000/api/chat \
+-H "Content-Type: application/json" \
+-d '{"message":"What is the machine status?"}'
 ```
 
 ---
 
-## 📊 Sample Sensor Values
+## 🗄️ Database Design
 
-| Scenario | Temperature | Vibration | Pressure | RPM |
-|----------|------------|-----------|----------|-----|
-| ✅ Healthy | 52°C | 0.28g | 102 PSI | 1510 |
-| ⚠️ Warning | 74°C | 0.72g | 84 PSI | 1260 |
-| 🔴 Failure | 102°C | 1.85g | 55 PSI | 880 |
+The application uses SQLite to store machine monitoring information.
 
----
+The database is designed to maintain:
 
-## 🧠 How the Model Works
+### Predictions Table
 
-1. **Data Generation**: 3,000 synthetic sensor readings labelled as Healthy/Warning/Failure
-2. **Preprocessing**: Missing values → median fill; Features → StandardScaler normalisation
-3. **Training**: XGBoost (200 trees, depth 5) + Logistic Regression (baseline)
-4. **Prediction**: New readings are scaled and fed to the XGBoost classifier
-5. **Confidence**: `predict_proba()` returns probability for each class
-6. **RCA**: Rule-based engine maps sensor thresholds to probable causes
+Stores machine sensor readings and prediction results.
 
-### Machine Condition Classes
-- **0 = Healthy** — All sensors in normal range
-- **1 = Warning** — One or more sensors approaching critical limits
-- **2 = Failure** — Critical sensor readings, immediate action required
+| Field | Description |
+|---|---|
+| id | Unique prediction ID |
+| temperature | Temperature reading |
+| vibration | Vibration reading |
+| pressure | Pressure reading |
+| rpm | Rotational speed |
+| condition | Predicted machine condition |
+| confidence | Prediction confidence |
+| timestamp | Prediction date and time |
 
----
+### Alerts Table
 
-## 🗄️ Database Schema (SQLite)
+Stores machine threshold alerts and related information.
 
-```sql
--- Predictions log
-CREATE TABLE predictions (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    temperature REAL,
-    vibration   REAL,
-    pressure    REAL,
-    rpm         REAL,
-    condition   TEXT,
-    confidence  REAL,
-    timestamp   TEXT
-);
+### Chat History Table
 
--- Threshold alerts
-CREATE TABLE alerts (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    machine_id  TEXT,
-    alert_type  TEXT,
-    message     TEXT,
-    timestamp   TEXT
-);
+Stores maintenance assistant conversation history.
 
--- Chat history
-CREATE TABLE chat_history (
-    id        INTEGER PRIMARY KEY AUTOINCREMENT,
-    role      TEXT,
-    message   TEXT,
-    timestamp TEXT
-);
-```
+*The actual database schema depends on the SQLite initialization code in the application.*
 
 ---
 
-## 🤖 Chatbot Capabilities
+## 🤖 AI Maintenance Assistant
 
-The AI Assistant can answer:
-- *"What is the machine status?"*
-- *"What is the failure probability?"*
-- *"What is the temperature / vibration / pressure / RPM?"*
-- *"Are there any anomalies?"*
-- *"What maintenance action should I take?"*
-- *"What are the maintenance recommendations?"*
+The maintenance assistant supports questions related to:
 
----
-
-## 📦 Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| ML | XGBoost, Scikit-learn |
-| Backend | Flask, Flask-CORS |
-| Database | SQLite (via sqlite3) |
-| Data | Pandas, NumPy |
-| Visualisation | Matplotlib, Seaborn |
-| Frontend | HTML5, CSS3, Vanilla JS, Chart.js |
-| Model Persistence | Joblib |
+- What is the machine status?
+- What is the failure probability?
+- What is the current temperature?
+- What is the vibration level?
+- What is the pressure reading?
+- What is the RPM?
+- Are there any anomalies?
+- What maintenance action should I take?
+- What are the maintenance recommendations?
 
 ---
 
-*Built as a Final Year Engineering Project — Predictive Maintenance using Machine Learning*
+## 📊 Visualizations
+
+The project includes visualizations to understand machine sensor data and model performance.
+
+- Temperature Distribution
+- Vibration Trends
+- Confusion Matrix
+- Feature Importance
+- Model Comparison
+
+---
+
+## 🔮 Future Enhancements
+
+- Real-time IoT sensor integration.
+- Live industrial machine monitoring.
+- Advanced anomaly detection.
+- Remaining Useful Life (RUL) estimation.
+- Cloud-based predictive maintenance.
+- Automated maintenance scheduling.
+- Integration with industrial equipment monitoring systems.
+
+---
+
+## 👩‍💻 Author
+
+**Yoghadharshini R**
+
+B.Tech — Artificial Intelligence and Data Science
+
+GitHub: [Yoghadharshini2005](https://github.com/Yoghadharshini2005)
+
+---
+
+⭐ If you find this project useful, consider giving the repository a star!
+
+*Built as an Engineering Project — Predictive Maintenance Using Machine Learning.*
