@@ -60,7 +60,7 @@ predictive_maintenance_system/
     └── maintenance.db
 ```
 
-*Note: Dataset, trained model files, visualization plots, and database files may be generated automatically when the corresponding scripts or application are executed.*
+*Note: Dataset, trained model files, and visualization plots may be generated automatically when the training script is executed. SQLite database files are created only if configured in the application.*
 
 ---
 
